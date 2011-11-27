@@ -3,8 +3,9 @@
 return array(
     'sourcePath' => dirname(__FILE__) . '/../../',
     'messagePath' => dirname(__FILE__),
-    'languages' => array('sr_sr', 'sr_yu'),
+    'languages' => array('sr_sr',),
     'fileType' => array('php'),
+    'translator' => 't',
     'exclude' => array(
         '.git',
         '/webroot/index.php',

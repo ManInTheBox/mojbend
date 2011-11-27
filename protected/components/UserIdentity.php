@@ -19,7 +19,7 @@ class UserIdentity extends CUserIdentity
     {
         return (int) $this->_id;
     }
-    
+
     /**
      * Method simply returns username of currently logging user
      * @return string username
@@ -38,18 +38,12 @@ class UserIdentity extends CUserIdentity
      */
     public function authenticate()
     {
-        $criteria = new CDbCriteria();
-        $criteria->addColumnCondition(array(
-            'username' => $this->username,
-            'email' => $this->username,
-                ), 'OR'
-        );
-        $user = User::model()->find($criteria);
+        $user = User::model()->find('email = :email', array(':email' => $this->username));
         if (!isset($user))
         {
             $this->errorCode = self::ERROR_USERNAME_INVALID;
         }
-        else if (User::encryptPassword($this->password) !== $user->password)
+        else if (User::encryptPassword($this->password, $user->salt) !== $user->password)
         {
             $this->errorCode = self::ERROR_PASSWORD_INVALID;
         }
@@ -57,11 +51,11 @@ class UserIdentity extends CUserIdentity
         {
             $this->errorCode = self::ERROR_NONE;
             $this->_id = $user->id;
-            $this->_username = $user->username;
+            $this->_username = $user->email;
             $this->setState('email', $user->email);
         }
 
-        return !$this->errorCode;
+        return!$this->errorCode;
     }
 
 }

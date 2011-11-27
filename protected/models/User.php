@@ -5,16 +5,26 @@
  *
  * The followings are the available columns in table 'user':
  * @property integer $id
- * @property string $username
- * @property string $password
  * @property string $email
- * @property string $first_name
- * @property string $last_name
- * @property string $full_name
- * @property string $create_time
+ * @property string $password
+ * @property string $salt
+ * @property integer $status
+ * @property string $created_at
+ * @property string $language
+ * @property string $cookie_token
+ * @property integer $logged_in
  */
 class User extends ActiveRecord
 {
+    const STATUS_INACTIVE = 0;
+    const STATUS_PENDING = 1;
+    const STATUS_ACTIVE = 2;
+    const STATUS_SUSPENDED = 3;
+    const STATUS_DEACTIVATED = 4;
+    
+    
+    const LOGGED_IN = 1;
+    const LOGGED_OUT = 0;
 
     /**
      * Returns the static model of the specified AR class.
@@ -39,12 +49,14 @@ class User extends ActiveRecord
     public function rules()
     {
         return array(
-            array('username, password, email', 'required'),
-            array('username, first_name, last_name', 'length', 'max' => 64),
-            array('password', 'length', 'max' => 128),
+            array('email, password', 'required'),
+            array('status, logged_in', 'numerical', 'integerOnly' => true),
             array('email', 'length', 'max' => 255),
-            array('full_name', 'length', 'max' => 129),
-            array('create_time', 'length', 'max' => 13),
+            array('email', 'email',),
+//            array('email', 'email', 'checkMX' => true),
+            array('password', 'length', 'max' => 128),
+            array('salt, cookie_token', 'length', 'max' => 32),
+            array('created_at, language', 'length', 'max' => 10),
         );
     }
 
@@ -63,39 +75,36 @@ class User extends ActiveRecord
     public function attributeLabels()
     {
         return array(
-            'id' => Yii::t('mojbend', 'ID'),
-            'username' => Yii::t('mojbend', 'Username'),
-            'password' => Yii::t('mojbend', 'Password'),
-            'email' => Yii::t('mojbend', 'Email'),
-            'first_name' => Yii::t('mojbend', 'First Name'),
-            'last_name' => Yii::t('mojbend', 'Last Name'),
-            'full_name' => Yii::t('mojbend', 'Full Name'),
-            'create_time' => Yii::t('mojbend', 'Create Time'),
+            'email' => t('Email'),
+            'password' => t('Password'),
+            'language' => t('Language'),
         );
     }
 
-    /**
-     * Encrypts password using md5 algorithm
-     * 
-     * @return string md5 password value 
-     */
-    public static function encryptPassword($valueToEncrypt)
+    public function behaviors()
     {
-        return md5($valueToEncrypt);
+        return array(
+            'CTimestampBehavior' => array(
+                'class' => 'zii.behaviors.CTimestampBehavior',
+                'createAttribute' => 'created_at',
+            )
+        );
     }
 
-    /**
-     * Some tunes like uppercase first character of first and last name
-     * and concatenate them into full name
-     */
-    protected function afterValidate()
+    protected function beforeSave()
     {
-        $this->first_name = ucfirst($this->first_name);
-        $this->last_name = ucfirst($this->last_name);
+        if ($this->scenario == 'create')
+        {
+            $this->salt = Utility::generateHash();
+            $this->password = self::encryptPassword($this->password, $this->salt);
+            $this->status = self::STATUS_PENDING;
+        }
+        return parent::beforeSave();
+    }
 
-        $this->full_name = $this->first_name . ' ' . $this->last_name;
-
-        parent::afterValidate();
+    public static function encryptPassword($value, $secret)
+    {
+        return hash_hmac('md5', $value, $secret);
     }
 
 }
