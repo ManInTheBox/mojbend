@@ -20,22 +20,66 @@ function r()
     return Yii::app()->getRequest();
 }
 
+function c()
+{
+    return Yii::app()->getController();
+}
+
 function db()
 {
     return Yii::app()->getDb();
 }
 
-function l($text, $url, $htmlOptions = array())
+function l($text, $url = '#', $htmlOptions = array())
 {
     return CHtml::link($text, $url, $htmlOptions);
 }
 
-function url($route, $params = array(), $ampersand = '&')
+function url($route, $params = array(), $absolute = false, $ampersand = '&', $schema = '')
 {
-    return Yii::app()->getController()->createUrl($route, $params, $ampersand);
+    $url = '';
+    if ($absolute)
+    {
+        $url = Yii::app()->getController()->createAbsoluteUrl($route, $params, $schema, $ampersand);
+    }
+    else
+    {
+        $url = Yii::app()->getController()->createUrl($route, $params, $ampersand);
+    }
+    return $url;
 }
 
-function t($message, $category = 'mojbend', $params = array(), $source = null, $language = null)
+function t($message, $params = array(), $category = 'imp', $source = null, $language = null)
 {
     return Yii::t($category, $message, $params, $source, $language);
+}
+
+function bu($absolute = false)
+{
+    return Yii::app()->getBaseUrl($absolute);
+}
+
+function sql($query = null)
+{
+    return Yii::app()->getDb()->createCommand($query);
+}
+
+function ajax()
+{
+    return Yii::app()->getRequest()->getIsAjaxRequest();
+}
+
+function post()
+{
+    return Yii::app()->getRequest()->getIsPostRequest();
+}
+
+function guest()
+{
+    return Yii::app()->getUser()->getIsGuest();
+}
+
+function path($alias)
+{
+    return Yii::getPathOfAlias($alias);
 }

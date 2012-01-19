@@ -1,7 +1,9 @@
 <?php
 
+Yii::setPathOfAlias('wrappers', dirname(__FILE__) . '/components/wrappers');
+
 return array(
-    'sourceLanguage' => 'sr_sr',
+//    'sourceLanguage' => 'sr_sr',
     'basePath' => dirname(__FILE__) . '/..',
     'runtimePath' => dirname(__FILE__) . '/../../runtime',
     'homeUrl' => array('/site/index'),
@@ -10,6 +12,8 @@ return array(
     'import' => array(
         'application.models.*',
         'application.components.*',
+        'application.components.wrappers.*',
+        'application.validators.*',
     ),
     'modules' => array(
         'gii' => array(
