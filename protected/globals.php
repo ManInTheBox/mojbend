@@ -49,7 +49,7 @@ function url($route, $params = array(), $absolute = false, $ampersand = '&', $sc
     return $url;
 }
 
-function t($message, $params = array(), $category = 'imp', $source = null, $language = null)
+function t($message, $params = array(), $category = 'mojbend', $source = null, $language = null)
 {
     return Yii::t($category, $message, $params, $source, $language);
 }
