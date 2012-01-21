@@ -9,13 +9,16 @@ class UserController extends Controller
      */
     public $layout = '//layouts/column2';
 
+    public $defaultAction = 'home';
+
     /**
      * @return array action filters
      */
     public function filters()
     {
         return array(
-            'accessControl', // perform access control for CRUD operations
+            'accessControl',
+            array('application.filters.UserReadyFilter + home'),
         );
     }
 
@@ -27,125 +30,30 @@ class UserController extends Controller
     public function accessRules()
     {
         return array(
-            array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view', 'register'),
+            array('allow',
+                'actions' => array(
+                    'home', 'register', 'login', 'activate', 'passwordReset',
+                ),
                 'users' => array('*'),
             ),
-            array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update'),
+            array('allow',
+                'actions' => array(),
                 'users' => array('@'),
             ),
-            array('allow', // allow admin user to perform 'admin' and 'delete' actions
-                'actions' => array('admin', 'delete'),
-                'users' => array('admin'),
-            ),
-            array('deny', // deny all users
+            array('deny',
                 'users' => array('*'),
             ),
         );
     }
 
     /**
-     * Displays a particular model.
-     * @param integer $id the ID of the model to be displayed
-     */
-    public function actionView($id)
-    {
-        $this->render('view', array(
-            'model' => $this->loadModel($id),
-        ));
-    }
-
-    /**
-     * Creates a new model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     */
-    public function actionCreate()
-    {
-        $model = new User;
-
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-
-        if (isset($_POST['User']))
-        {
-            $model->attributes = $_POST['User'];
-            if ($model->save())
-                $this->redirect(array('view', 'id' => $model->id));
-        }
-
-        $this->render('create', array(
-            'model' => $model,
-        ));
-    }
-
-    /**
-     * Updates a particular model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id the ID of the model to be updated
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->loadModel($id);
-
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
-
-        if (isset($_POST['User']))
-        {
-            $model->attributes = $_POST['User'];
-            if ($model->save())
-                $this->redirect(array('view', 'id' => $model->id));
-        }
-
-        $this->render('update', array(
-            'model' => $model,
-        ));
-    }
-
-    /**
-     * Deletes a particular model.
-     * If deletion is successful, the browser will be redirected to the 'admin' page.
-     * @param integer $id the ID of the model to be deleted
-     */
-    public function actionDelete($id)
-    {
-        if (Yii::app()->request->isPostRequest)
-        {
-            // we only allow deletion via POST request
-            $this->loadModel($id)->delete();
-
-            // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-            if (!isset($_GET['ajax']))
-                $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-        }
-        else
-            throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
-    }
-
-    /**
      * Lists all models.
      */
-    public function actionIndex()
+    public function actionHome()
     {
         $dataProvider = new CActiveDataProvider('User');
         $this->render('index', array(
             'dataProvider' => $dataProvider,
-        ));
-    }
-
-    /**
-     * Manages all models.
-     */
-    public function actionAdmin()
-    {
-        $model = new User('search');
-        $model->unsetAttributes();  // clear any default values
-        if (isset($_GET['User']))
-            $model->attributes = $_GET['User'];
-
-        $this->render('admin', array(
-            'model' => $model,
         ));
     }
 
@@ -177,17 +85,163 @@ class UserController extends Controller
 
     public function actionRegister()
     {
-        $user = new User('create');
+        $user = new User();
+        $person = new Person();
+        
         if (isset($_POST['User']))
         {
+            $saved = false;
+            
             $user->attributes = $_POST['User'];
             if ($user->save())
             {
-                $this->redirect('index');
+                $saved = true;
+
+                $person->attributes = $_POST['Person'];
+                $person->user_id = $user->id;
+                $saved = $person->save();
+                
+                if ($user->is_artist)
+                {
+                    $artist = new Artist();
+                    $artist->user_id = $user->id;
+                    $saved = $saved & $artist->save();
+                }
+
+                if ($saved)
+                {
+                    $email = new Email();
+                    $email->user_id = $user->id;
+                    $email->receiver_address = $user->email;
+                    $email->receiver_name = $person->fullName;
+                    $email->bodyData = array(
+                        'activation_link' => l(
+                                url('/user/activate', array('uid' => $user->id, 'token' => $user->activation_hash), true),
+                                url('/user/activate', array('uid' => $user->id, 'token' => $user->activation_hash), true)
+                        ),
+                    );
+                    $email->send(Email::TYPE_REGISTER);
+
+                    $this->redirect(array('home', 'uid' => $user->id));
+                }
             }
         }
 
-        $this->render('register', array('user' => $user));
+        $this->render('register', array('user' => $user, 'person' => $person));
+    }
+
+    public function actionLogin()
+    {
+        $loginForm = new LoginForm();
+
+        if (isset($_POST['LoginForm']))
+        {
+            $loginForm->attributes = $_POST['LoginForm'];
+            
+            if ($loginForm->validate() && $loginForm->login())
+            {
+                // TODO: da li je neophodan returnUrl?
+                if (isset (u()->returnUrl))
+                {
+                    $this->redirect(u()->returnUrl);
+                }
+                else
+                {
+                    $this->redirect(array('home', 'uid' => u()->id));
+                }
+            }
+        }
+
+        $this->render('login', array('loginForm' => $loginForm));
+    }
+
+    public function actionActivate($uid, $token)
+    {
+        $user = User::model()->findByAttributes(array('id' => $uid, 'activation_hash' => $token));
+
+        if ($user)
+        {
+            $user->status = User::STATUS_ACTIVE;
+            $user->save(false);
+            $this->setFlashSuccess(t('Your account is activated now. Please login to continue.'));
+            $this->redirect(array('/user/login'));
+        }
+        else
+        {
+            throw new CHttpException(404);
+        }
+    }
+
+    public function actionPasswordReset()
+    {
+        $passwordResetForm = new PasswordResetForm();
+
+        if (isset ($_POST['PasswordResetForm']))
+        {
+            $passwordResetForm->attributes = $_POST['PasswordResetForm'];
+
+            if ($passwordResetForm->validate())
+            {
+                $user = User::model()->findByAttributes(array('email' => $passwordResetForm->email));
+
+                if ($user)
+                {
+                    $email = new Email();
+                    $email->user_id = $user->id;
+                    $email->receiver_address = $user->email;
+                    $email->bodyData = array(
+                        'link' => l(
+                                url('/user/lostPassword', array('uid' => $user->id, 'token' => $user->activation_hash), true),
+                                url('/user/lostPassword', array('uid' => $user->id, 'token' => $user->activation_hash), true)
+                        )
+                    );
+                    $email->send(Email::TYPE_PASSWORD_RESET);
+
+                    $this->setFlashInfo(t('Read email.'));
+                    $this->redirect(array('user/login'));
+                }
+                else
+                {
+                    $passwordResetForm->addError('email', t('E-mail didn\'t found in our database.'));
+                }
+            }
+        }
+
+        $this->render('passwordReset', array('passwordResetForm' => $passwordResetForm));
+    }
+
+    public function actionLostPassword($uid, $token)
+    {
+        $user = User::model()->findByAttributes(array('id' => $uid, 'activation_hash' => $token));
+
+        if ($user)
+        {
+            $lostPasswordForm = new LostPasswordForm();
+            $lostPasswordForm->user_id = $user->id;
+            $lostPasswordForm->token = $user->activation_hash;
+
+            if (isset ($_POST['LostPasswordForm']))
+            {
+                $lostPasswordForm->attributes = $_POST['LostPasswordForm'];
+
+                if ($lostPasswordForm->validate())
+                {
+                    $salt = Utility::generateHash();
+                    $user->password = User::encryptPassword($lostPasswordForm->new_password, $salt);
+                    $user->salt = $salt;
+                    $user->activation_hash = Utility::generateHash();
+                    $user->save(false);
+                    $this->setFlashSuccess(t('new password done...'));
+                    $this->redirect(array('/user/login'));
+                }
+            }
+
+            $this->render('/user/lostPassword', array('lostPasswordForm' => $lostPasswordForm));
+        }
+        else
+        {
+            throw new CHttpException(404);
+        }
     }
 
 }

@@ -27,7 +27,7 @@ return array(
     ),
     'components' => array(
         'user' => array(
-            'class' => 'application.components.WebUser',
+            'class' => 'application.components.wrappers.WebUser',
             'allowAutoLogin' => true,
         ),
         'request' => array(
@@ -39,7 +39,8 @@ return array(
             'showScriptName' => false,
             'rules' => array(
                 '' => 'site/index',
-                'home' => 'user/index',
+                'home' => 'user/home',
+                'home/<uid:\d+>' => 'user/home',
                 '<action:\w+>' => 'site/<action>',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
@@ -55,6 +56,7 @@ return array(
             'enableParamLogging' => true,
         ),
         'errorHandler' => array(
+            'class' => 'application.components.wrappers.ErrorHandler',
             'errorAction' => 'site/error',
         ),
         'log' => array(

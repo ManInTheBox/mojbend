@@ -8,6 +8,11 @@
 class UserIdentity extends CUserIdentity
 {
 
+    const ERROR_STATUS_INACTIVE = 3;
+    const ERROR_STATUS_PENDING = 4;
+    const ERROR_STATUS_SUSPENDED = 5;
+    const ERROR_STATUS_DEACTIVATED = 6;
+
     private $_id;
     private $_username;
 
@@ -39,6 +44,7 @@ class UserIdentity extends CUserIdentity
     public function authenticate()
     {
         $user = User::model()->find('email = :email', array(':email' => $this->username));
+
         if (!isset($user))
         {
             $this->errorCode = self::ERROR_USERNAME_INVALID;
@@ -47,15 +53,33 @@ class UserIdentity extends CUserIdentity
         {
             $this->errorCode = self::ERROR_PASSWORD_INVALID;
         }
+        else if ($user->status == User::STATUS_INACTIVE)
+        {
+            $this->errorCode = self::ERROR_STATUS_INACTIVE;
+        }
+        else if ($user->status == User::STATUS_PENDING)
+        {
+            $this->errorCode = self::ERROR_STATUS_PENDING;
+        }
+        else if ($user->status == User::STATUS_SUSPENDED)
+        {
+            $this->errorCode = self::ERROR_STATUS_SUSPENDED;
+        }
+        else if ($user->status == User::STATUS_DEACTIVATED)
+        {
+            $this->errorCode = self::ERROR_STATUS_DEACTIVATED;
+        }
         else
         {
             $this->errorCode = self::ERROR_NONE;
             $this->_id = $user->id;
             $this->_username = $user->email;
+            $this->setState('id', $user->id);
             $this->setState('email', $user->email);
+            $this->setState('language', $user->language);
         }
 
-        return!$this->errorCode;
+        return !$this->errorCode;
     }
 
 }

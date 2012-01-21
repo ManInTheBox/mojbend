@@ -54,7 +54,29 @@ class LoginForm extends CFormModel
         {
             $this->_identity = new UserIdentity($this->email, $this->password);
             if (!$this->_identity->authenticate())
-                $this->addError('password', t('Incorrect email or password.'));
+            {
+                switch ($this->_identity->errorCode)
+                {
+                    case UserIdentity::ERROR_STATUS_INACTIVE:
+                        $this->addError('password', t('Your account is not active.'));
+                        break;
+                    case UserIdentity::ERROR_STATUS_PENDING:
+                        $user = User::model()->findByAttributes(array('email' => $this->email));
+                        $this->addError('password', t('Your account is not activated. Please click link in email.<br />{link}', array(
+                            '{link}' => l('ACTIVATE', url('/user/activate', array('uid' => $user->id, 'token' => $user->activation_hash))),
+                        )));
+                        break;
+                    case UserIdentity::ERROR_STATUS_SUSPENDED:
+                        $this->addError('password', t('Your account is suspended.'));
+                        break;
+                    case UserIdentity::ERROR_STATUS_DEACTIVATED:
+                        $this->addError('password', t('Your account is deactivated.'));
+                        break;
+                    default:
+                        $this->addError('password', t('Incorrect email or password.'));
+                        break;
+                }
+            }
         }
     }
 

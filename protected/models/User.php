@@ -13,6 +13,7 @@
  * @property string $language
  * @property string $cookie_token
  * @property integer $logged_in
+ * @property string $activation_hash
  */
 class User extends ActiveRecord
 {
@@ -22,9 +23,10 @@ class User extends ActiveRecord
     const STATUS_SUSPENDED = 3;
     const STATUS_DEACTIVATED = 4;
     
-    
     const LOGGED_IN = 1;
     const LOGGED_OUT = 0;
+
+    public $is_artist = false;
 
     /**
      * Returns the static model of the specified AR class.
@@ -53,10 +55,12 @@ class User extends ActiveRecord
             array('status, logged_in', 'numerical', 'integerOnly' => true),
             array('email', 'length', 'max' => 255),
             array('email', 'email',),
+            array('email', 'unique'),
 //            array('email', 'email', 'checkMX' => true),
             array('password', 'length', 'max' => 128),
             array('salt, cookie_token', 'length', 'max' => 32),
             array('created_at, language', 'length', 'max' => 10),
+            array('is_artist', 'boolean'),
         );
     }
 
@@ -66,6 +70,7 @@ class User extends ActiveRecord
     public function relations()
     {
         return array(
+            'person' => array(self::HAS_ONE, 'Person', 'user_id'),
         );
     }
 
@@ -78,27 +83,20 @@ class User extends ActiveRecord
             'email' => t('Email'),
             'password' => t('Password'),
             'language' => t('Language'),
+            'is_artist' => t('Are you artist?'),
         );
     }
-
-    public function behaviors()
-    {
-        return array(
-            'CTimestampBehavior' => array(
-                'class' => 'zii.behaviors.CTimestampBehavior',
-                'createAttribute' => 'created_at',
-            )
-        );
-    }
-
+    
     protected function beforeSave()
     {
-        if ($this->scenario == 'create')
+        if ($this->isNewRecord)
         {
+            $this->created_at = time();
             $this->salt = Utility::generateHash();
             $this->password = self::encryptPassword($this->password, $this->salt);
-            $this->status = self::STATUS_PENDING;
+            $this->activation_hash = Utility::generateHash();
         }
+        
         return parent::beforeSave();
     }
 

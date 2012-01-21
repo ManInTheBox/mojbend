@@ -40,10 +40,73 @@ class SiteController extends Controller
     {
         if ($error = Yii::app()->errorHandler->error)
         {
-            if (Yii::app()->request->isAjaxRequest)
+            if ($error['code'] == 500)
+            {
+                $userId = null;
+
+                if (!guest())
+                {
+                    $userId = u()->id;
+                }
+                
+                try
+                {
+                    $email = new Email();
+                    $email->receivers = array(
+                        'zarko.stankovic@itsmyplay.com' => 'Zarko Stankovic',
+                    );
+                    $email->bodyData = array(
+                        'time' => gmdate('Y-m-d H:i:s'),
+                        'currentUrl' => r()->url,
+                        'referrer' => r()->urlReferrer,
+                        'browser' => r()->userAgent,
+                        'userId' => $userId,
+                        'type' => $error['type'],
+                        'message' => $error['message'],
+                        'file' => $error['file'],
+                        'line' => $error['line'],
+                        'stackTrace' => $error['trace'],
+                    );
+                    $email->send(Email::TYPE_INTERNAL_ERROR);
+                }
+                catch (Exception $ex)
+                {
+                    // let error page displays its fancy content
+                }
+            }
+
+            switch ($error['code'])
+            {
+                case 400:
+                    $error['message'] = t('Your request is invalid. Please do not repeat that again.');
+                    break;
+                case 404:
+                    $error['message'] = t('The requested page wasn\'t found.');
+                    break;
+                case 403:
+                    $error['message'] = t('You don\'t have permissions to access this page.');
+                    break;
+                case 500:
+                    $error['message'] = t('Something went wrong and our engineers are working on it.');
+                    break;
+                default:
+                    $error['message'] = t('Something went wrong and our engineers are working on it.');
+                    break;
+            }
+
+            if (ajax())
+            {
                 echo $error['message'];
+                Yii::app()->end();
+            }
             else
+            {
                 $this->render('error', $error);
+            }
+        }
+        else
+        {
+            throw new CHttpException(404);
         }
     }
 
