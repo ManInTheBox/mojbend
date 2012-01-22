@@ -77,6 +77,13 @@ class UserIdentity extends CUserIdentity
             $this->setState('id', $user->id);
             $this->setState('email', $user->email);
             $this->setState('language', $user->language);
+            $this->setState('homeUrl', $user->homeUrl);
+
+            $cookie_token = Utility::generateHash();
+            $user->cookie_token = $cookie_token;
+            $user->logged_in = User::LOGGED_IN;
+            $user->save(false);
+            $this->setState('cookie_token', $cookie_token);
         }
 
         return !$this->errorCode;

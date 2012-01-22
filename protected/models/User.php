@@ -14,6 +14,7 @@
  * @property string $cookie_token
  * @property integer $logged_in
  * @property string $activation_hash
+ * @property string $url_alias
  */
 class User extends ActiveRecord
 {
@@ -103,6 +104,22 @@ class User extends ActiveRecord
     public static function encryptPassword($value, $secret)
     {
         return hash_hmac('md5', $value, $secret);
+    }
+
+    public function getHomeUrl($absolute = false)
+    {
+        $homeUrl = '';
+        
+        if ($this->url_alias)
+        {
+            $homeUrl = url('/user/home', array('alias' => $this->url_alias), $absolute);
+        }
+        else
+        {
+            $homeUrl = url('/user/home', array('uid' => $this->id), $absolute);
+        }
+
+        return $homeUrl;
     }
 
 }

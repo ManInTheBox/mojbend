@@ -107,4 +107,52 @@ class Controller extends CController
         }
     }
 
+    /**
+     * Returns the data model based on the primary key given in the GET variable.
+     * If the data model is not found, an HTTP exception will be raised.
+     * @param integer the ID of the model to be loaded
+     */
+    public function loadModel($class, $condition, $params = array(), $errorCode = 404)
+    {
+        $model = null;
+        
+        if (is_numeric($condition))
+        {
+            $model = $class::model()->findByPk($condition);
+        }
+        else
+        {
+            $model = $class::model()->find($condition, $params);
+        }
+        
+        if ($model === null)
+        {
+            throw new CHttpException($errorCode);
+        }
+        
+        return $model;
+    }
+
+    /**
+     * Performs the AJAX validation.
+     * @param CModel the model to be validated
+     */
+    protected function performAjaxValidation($model)
+    {
+        $splited = Utility::splitByCaps(get_class($model));
+        $formName = strtolower(str_replace(' ', '-', $splited));
+        preg_match('/-form$/', $formName, $matches);
+
+        if (empty ($matches))
+        {
+            $formName .= '-form';
+        }
+        
+        if (isset($_POST['ajax']) && $_POST['ajax'] === $formName)
+        {
+            echo CActiveForm::validate($model);
+            a()->end();
+        }
+    }
+
 }

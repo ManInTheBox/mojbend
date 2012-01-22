@@ -3,8 +3,9 @@
 Yii::setPathOfAlias('wrappers', dirname(__FILE__) . '/components/wrappers');
 
 return array(
-//    'sourceLanguage' => 'sr_sr',
+    'sourceLanguage' => 'en',
     'basePath' => dirname(__FILE__) . '/..',
+    'onBeginRequest' => array('Bootstrap', 'beginRequest'),
     'runtimePath' => dirname(__FILE__) . '/../../runtime',
     'homeUrl' => array('/site/index'),
     'name' => 'Moj Bend',
@@ -29,6 +30,7 @@ return array(
         'user' => array(
             'class' => 'application.components.wrappers.WebUser',
             'allowAutoLogin' => true,
+            'loginUrl' => array('/user/login'),
         ),
         'request' => array(
             'enableCsrfValidation' => true,
@@ -37,14 +39,7 @@ return array(
         'urlManager' => array(
             'urlFormat' => 'path',
             'showScriptName' => false,
-            'rules' => array(
-                '' => 'site/index',
-                'home' => 'user/home',
-                'home/<uid:\d+>' => 'user/home',
-                '<action:\w+>' => 'site/<action>',
-                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
-                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
-            ),
+            'rules' => require_once dirname(__FILE__) . '/url_rules.php',
         ),
         'db' => array(
             'connectionString' => 'mysql:host=localhost;dbname=mojbend_dev',

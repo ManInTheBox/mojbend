@@ -81,8 +81,8 @@ class Person extends ActiveRecord
 
     protected function beforeSave()
     {
-        $this->first_name = trim(mb_ucfirst($this->first_name, 'UTF-8'));
-        $this->last_name = trim(mb_ucfirst($this->last_name, 'UTF-8'));
+        $this->first_name = trim(mb_ucfirst($this->first_name));
+        $this->last_name = trim(mb_ucfirst($this->last_name));
         return parent::beforeSave();
     }
 

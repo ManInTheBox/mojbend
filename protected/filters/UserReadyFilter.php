@@ -9,6 +9,7 @@ class UserReadyFilter extends CFilter
 {
     protected function preFilter($filterChain)
     {
+        // TODO: ubaciti i url_alias proveru!
         $uid = null;
 
         if (isset ($_GET['uid']))

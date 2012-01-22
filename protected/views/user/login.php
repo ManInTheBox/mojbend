@@ -5,6 +5,7 @@
 	'id'=>'login-form',
 )); ?>
 
+    <?php echo $form->errorSummary($loginForm); ?>
 	<div class="row">
 		<?php echo $form->labelEx($loginForm,'email'); ?>
 		<?php echo $form->textField($loginForm,'email'); ?>

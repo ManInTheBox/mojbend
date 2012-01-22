@@ -20,4 +20,9 @@ class Utility
         return md5($salt . microtime());
     }
 
+    public static function splitByCaps($string)
+    {
+        return preg_replace('/([a-z0-9]){1}([A-Z])/', '$1 $2', $string);
+    }
+
 }

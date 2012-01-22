@@ -84,10 +84,25 @@ function path($alias)
     return Yii::getPathOfAlias($alias);
 }
 
-function mb_ucfirst($string, $encoding)
+function mb_ucfirst($string, $encoding = 'UTF-8')
 {
+    $string = trim($string);
     $strlen = mb_strlen($string, $encoding);
     $firstChar = mb_substr($string, 0, 1, $encoding);
     $then = mb_substr($string, 1, $strlen - 1, $encoding);
+    
     return mb_strtoupper($firstChar, $encoding) . $then;
+}
+
+function mb_ucwords($string, $encoding = 'UTF-8')
+{
+    $result = '';
+    $string = trim($string);
+    $words = explode(' ', $string);
+    foreach ($words as $word)
+    {
+        $result .= mb_ucfirst($word, $encoding) . ' ';
+    }
+    
+    return $result;
 }
