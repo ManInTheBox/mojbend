@@ -38,7 +38,7 @@ class SiteController extends Controller
      */
     public function actionError()
     {
-        if ($error = Yii::app()->errorHandler->error)
+        if ($error = a()->errorHandler->error)
         {
             if ($error['code'] == 500)
             {
@@ -97,7 +97,7 @@ class SiteController extends Controller
             if (ajax())
             {
                 echo $error['message'];
-                Yii::app()->end();
+                a()->end();
             }
             else
             {

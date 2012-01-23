@@ -51,7 +51,7 @@ class GroupController extends Controller
 
     public function actionView($gid)
     {
-        $group = $this->loadModel('Group', (int) $gid);
+        $group = $this->loadModel('Group', $gid);
         $this->render('view', array('group' => $group));
     }
 

@@ -25,5 +25,6 @@ return array(
             'class' => 'system.cli.commands.MigrateCommand',
             'templateFile' => 'application.migrations._template',
         ),
+        'message' => 'application.commands.MyMessageCommand',
     ),
 );

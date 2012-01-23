@@ -59,8 +59,6 @@ class UserController extends Controller
 
     public function actionRegister()
     {
-        $this->performAjaxValidation(new PasswordResetForm());
-
         $user = new User();
         $person = new Person();
 
@@ -158,7 +156,10 @@ class UserController extends Controller
             {
                 try
                 {
-                    $user = $this->loadModel('User', 'email = :email', array(':email' => $passwordResetForm->email));
+                    $user = $this->loadModel('User', array(
+                        'condition' => 'email = :email',
+                        'params' => array(':email' => $passwordResetForm->email)
+                    ));
 
                     $email = new Email();
                     $email->user_id = $user->id;

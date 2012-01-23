@@ -123,6 +123,12 @@ class Email extends ActiveRecord
                 $this->receivers = json_encode($this->receivers);
             }
         }
+
+        if (!empty ($this->receivers) && is_array($this->receivers))
+        {
+            $this->receivers = json_encode($this->receivers);
+        }
+        
         return parent::beforeSave();
     }
 

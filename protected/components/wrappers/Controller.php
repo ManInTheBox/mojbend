@@ -115,21 +115,21 @@ class Controller extends CController
     public function loadModel($class, $condition, $params = array(), $errorCode = 404)
     {
         $model = null;
-        
+
         if (is_numeric($condition))
         {
             $model = $class::model()->findByPk($condition);
         }
-        else
+        else if (is_array($condition) || $condition instanceof CDbCriteria)
         {
             $model = $class::model()->find($condition, $params);
         }
-        
+
         if ($model === null)
         {
             throw new CHttpException($errorCode);
         }
-        
+
         return $model;
     }
 
