@@ -65,6 +65,11 @@ class GroupController extends Controller
 
             if ($group->save())
             {
+                // TODO: sta sa user_grup ???
+                $userGroup = new UserGroup();
+                $userGroup->user_id = u()->id;
+                $userGroup->group_id = $group->id;
+
                 $this->setFlashSuccess(t('Group succesfully created.'));
                 $this->redirect(array('/group/list'));
             }
@@ -75,7 +80,11 @@ class GroupController extends Controller
 
     public function actionDelete($gid)
     {
-
+        if (Group::model()->deleteByPk($gid, 'owner = :owner'))
+        {
+            $this->setFlashSuccess(t('group deleted...'));
+            $this->redirect(array('/group/list'));
+        }
     }
 
     public function actionInvite()
