@@ -1,28 +1,21 @@
 <?php
 
 /**
- * This is the model class for table "user_group".
+ * This is the model class for table "fan_group".
  *
- * The followings are the available columns in table 'user_group':
- * @property integer $user_id
+ * The followings are the available columns in table 'fan_group':
+ * @property integer $fan_id
  * @property integer $group_id
- * @property integer $created_at
- * @property integer $status
- * @property integer $list_role_id
+ * @property string $created_at
  *
- * @property User $user
+ * @property User $fan
  * @property Group $group
- * @property ListRole $listRole
  */
-class UserGroup extends ActiveRecord
+class FanGroup extends ActiveRecord
 {
-
-    const STATUS_ACCEPTED = 0;
-    const STATUS_DECLINED = 1;
-
     /**
      * Returns the static model of the specified AR class.
-     * @return UserGroup the static model class
+     * @return FanGroup the static model class
      */
     public static function model($className=__CLASS__)
     {
@@ -34,7 +27,7 @@ class UserGroup extends ActiveRecord
      */
     public function tableName()
     {
-        return 'user_group';
+        return 'fan_group';
     }
 
     /**
@@ -43,8 +36,9 @@ class UserGroup extends ActiveRecord
     public function rules()
     {
         return array(
-            array('user_id, group_id, created_at, status, list_role_id', 'required'),
-            array('user_id, group_id, created_at, status, list_role_id', 'numerical', 'integerOnly'=>true),
+            array('fan_id, group_id, created_at', 'required'),
+            array('fan_id, group_id', 'numerical', 'integerOnly'=>true),
+            array('created_at', 'length', 'max'=>10),
         );
     }
 
@@ -54,12 +48,11 @@ class UserGroup extends ActiveRecord
     public function relations()
     {
         return array(
-            'user' => array(self::BELONGS_TO, 'User', 'user_id'),
+            'fan' => array(self::BELONGS_TO, 'User', 'fan_id'),
             'group' => array(self::BELONGS_TO, 'Group', 'group_id'),
-            'listRole' => array(self::BELONGS_TO, 'ListRole', 'list_role_id'),
         );
     }
-    
+
     protected function beforeSave()
     {
         $this->created_at = time();

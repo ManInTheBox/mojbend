@@ -14,7 +14,7 @@
  * @property string $cookie_token
  * @property integer $logged_in
  * @property string $activation_hash
- * @property string $url_alias
+ * @property string $username
  */
 class User extends ActiveRecord
 {
@@ -110,9 +110,9 @@ class User extends ActiveRecord
     {
         $homeUrl = '';
         
-        if ($this->url_alias)
+        if ($this->username)
         {
-            $homeUrl = url('/user/home', array('alias' => $this->url_alias), $absolute);
+            $homeUrl = url('/user/home', array('alias' => $this->username), $absolute);
         }
         else
         {

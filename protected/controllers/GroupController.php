@@ -25,7 +25,7 @@ class GroupController extends Controller
                 'users' => array('*'),
             ),
             array('allow',
-                'actions' => array('new'),
+                'actions' => array('new', 'newFan'),
                 'users' => array('@'),
             ),
             array('allow',
@@ -43,7 +43,7 @@ class GroupController extends Controller
     {
         $groups = new CActiveDataProvider('Group', array(
             'pagination' => array(
-                'pageSize' => 1,
+                'pageSize' => 5,
             ),
         ));
         $this->render('list', array('groups' => $groups));
@@ -65,10 +65,11 @@ class GroupController extends Controller
 
             if ($group->save())
             {
-                // TODO: sta sa user_grup ???
-                $userGroup = new UserGroup();
-                $userGroup->user_id = u()->id;
-                $userGroup->group_id = $group->id;
+                $artistGroup = new ArtistGroup();
+                $artistGroup->artist_id = u()->id;
+                $artistGroup->group_id = $group->id;
+                $artistGroup->role = ArtistGroup::ROLE_ADMIN;
+                $artistGroup->save(false);
 
                 $this->setFlashSuccess(t('Group succesfully created.'));
                 $this->redirect(array('/group/list'));
@@ -87,8 +88,19 @@ class GroupController extends Controller
         }
     }
 
-    public function actionInvite()
+    public function actionInviteMember()
     {
+    }
+
+    public function actionNewFan($gid)
+    {
+        $fanGroup = new FanGroup();
+        $fanGroup->fan_id = u()->id;
+        $fanGroup->group_id = $gid;
+
+        $fanGroup->save();
+        $this->setFlashSuccess(t('You became fan.'));
+        $this->redirect(u()->returnUrl);
     }
 
 }

@@ -10,8 +10,9 @@
  *
  * @property User $user
  * @property ListArtistType $listArtistType
- * @property ArtistInstrument[] $artistInstruments
- * @property FanArtist[] $fanArtists
+ * @property Group[] $groups
+ * @property ListInstrument[] $instruments
+ * @property User[] $fans
  */
 class Artist extends ActiveRecord
 {
@@ -52,8 +53,9 @@ class Artist extends ActiveRecord
         return array(
             'user' => array(self::BELONGS_TO, 'User', 'user_id'),
             'listArtistType' => array(self::BELONGS_TO, 'ListArtistType', 'list_artist_type_id'),
-            'artistInstruments' => array(self::HAS_MANY, 'ArtistInstrument', 'artist_id'),
-            'fanArtists' => array(self::HAS_MANY, 'FanArtist', 'artist_id'),
+            'groups' => array(self::MANY_MANY, 'Group', 'artist_group(artist_id, group_id)'),
+            'instruments' => array(self::MANY_MANY, 'ListInstrument', 'artist_instrument(artist_id, list_instrument_id)'),
+            'fans' => array(self::MANY_MANY, 'User', 'fan_artist(artist_id, fan_id)'),
         );
     }
 

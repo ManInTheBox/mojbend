@@ -14,11 +14,12 @@
  * @property string $twitter_url
  * @property string $youtube_url
  *
- * @property FanGroup[] $fanGroups
- * @property UserGroup[] $userGroups
+ * @property Artist[] $artists
+ * @property User[] $fans
  */
 class Group extends ActiveRecord
 {
+
     /**
      * Returns the static model of the specified AR class.
      * @return Group the static model class
@@ -43,9 +44,9 @@ class Group extends ActiveRecord
     {
         return array(
             array('name', 'required'),
-            array('name', 'length', 'max'=>64),
-            array('created_at', 'length', 'max'=>10),
-            array('official_website, facebook_url, twitter_url, youtube_url', 'length', 'max'=>256),
+            array('name', 'length', 'max' => 64),
+            array('created_at', 'length', 'max' => 10),
+            array('official_website, facebook_url, twitter_url, youtube_url', 'length', 'max' => 256),
             array('description, founded_date', 'safe'),
         );
     }
@@ -56,8 +57,8 @@ class Group extends ActiveRecord
     public function relations()
     {
         return array(
-            'fanGroups' => array(self::HAS_MANY, 'FanGroup', 'group_id'),
-            'userGroups' => array(self::HAS_MANY, 'UserGroup', 'group_id'),
+            'artists' => array(self::MANY_MANY, 'Artist', 'artist_group(group_id, artist_id)'),
+            'fans' => array(self::MANY_MANY, 'User', 'fan_group(group_id, fan_id)'),
         );
     }
 
@@ -67,6 +68,7 @@ class Group extends ActiveRecord
     public function attributeLabels()
     {
         return array(
+            'id' => t('ID'),
             'name' => t('Name'),
             'description' => t('Description'),
             'created_at' => t('Created At'),
@@ -84,4 +86,5 @@ class Group extends ActiveRecord
         $this->name = trim(mb_ucwords($this->name));
         return parent::beforeSave();
     }
+
 }
