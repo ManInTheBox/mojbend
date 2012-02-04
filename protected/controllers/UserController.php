@@ -226,4 +226,21 @@ class UserController extends Controller
         $this->redirect(a()->homeUrl);
     }
 
+    public function actionEdit()
+    {
+        $user = $this->loadModel('User', u()->id);
+
+        if (isset ($_POST['User']))
+        {
+            $user->attributes = $_POST['User'];
+            $user->person->attributes = $_POST['Person'];
+
+            if ($user->save() && $user->person->save())
+            {
+                $this->setFlashSuccess('uspesno editovan user');
+            }
+        }
+        $this->render('edit', array('user' => $user, 'person' => $user->person));
+    }
+
 }

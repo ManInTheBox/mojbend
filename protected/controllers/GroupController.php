@@ -25,13 +25,15 @@ class GroupController extends Controller
                 'users' => array('*'),
             ),
             array('allow',
-                'actions' => array('new', 'newFan'),
+                'actions' => array(
+                    'new', 'newFan', 'inviteMembers', 'join', 'edit',
+                ),
                 'users' => array('@'),
             ),
             array('allow',
                 'actions' => array('delete'),
                 'users' => array('@'),
-                'verbs' => array('POST'),
+//                'verbs' => array('POST'),
             ),
             array('deny',
                 'users' => array('*'),
@@ -79,17 +81,59 @@ class GroupController extends Controller
         $this->render('new', array('group' => $group));
     }
 
+    public function actionEdit($gid)
+    {
+        $group = $this->loadModel('Group', $gid);
+
+        if (isset ($_POST['Group']))
+        {
+            $group->attributes = $_POST['Group'];
+            if ($group->save())
+            {
+                $this->setFlashSuccess('uspesno editovana...');
+            }
+        }
+        $this->render('edit', array('group' => $group));
+    }
+
     public function actionDelete($gid)
     {
-        if (Group::model()->deleteByPk($gid, 'owner = :owner'))
+        $group = $this->loadModel('Group', $gid);
+
+        if ($group->delete())
         {
             $this->setFlashSuccess(t('group deleted...'));
             $this->redirect(array('/group/list'));
         }
     }
 
-    public function actionInviteMember()
+    public function actionInviteMembers()
     {
+        if (ajax() && post())
+        {
+            $gid = $_POST['gid'];
+            $receivers = explode(',', $_POST['receivers']);
+
+            $saved = true;
+            foreach ($receivers as $receiver_id)
+            {
+                $request = new GroupMemberRequest();
+                $request->sender_id = u()->id;
+                $request->receiver_id = $receiver_id;
+                $request->group_id = $gid;
+                $saved = $saved & $request->save();
+            }
+            if ($saved)
+            {
+                echo 'ok';
+            }
+            else
+                print_r($request->getErrors());
+        }
+        else
+        {
+            throw new CHttpException(404);
+        }
     }
 
     public function actionNewFan($gid)
@@ -101,6 +145,26 @@ class GroupController extends Controller
         $fanGroup->save();
         $this->setFlashSuccess(t('You became fan.'));
         $this->redirect(u()->returnUrl);
+    }
+
+    public function actionJoin()
+    {
+        if (ajax() && post())
+        {
+            $request = new GroupMemberRequest();
+            $request->sender_id = $_POST['requester'];
+            $request->receiver_id = 1;
+            $request->group_id = $_POST['gid'];
+
+            if ($request->save())
+                    echo 'ok';
+            else
+                echo 'not ok';
+        }
+        else
+        {
+            throw new CHttpException(404);
+        }
     }
 
 }

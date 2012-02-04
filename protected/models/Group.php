@@ -13,12 +13,15 @@
  * @property string $facebook_url
  * @property string $twitter_url
  * @property string $youtube_url
+ * @property integer $profile_picture_id
  *
  * @property Artist[] $artists
  * @property User[] $fans
  */
 class Group extends ActiveRecord
 {
+
+    public $picture;
 
     /**
      * Returns the static model of the specified AR class.
@@ -48,6 +51,7 @@ class Group extends ActiveRecord
             array('created_at', 'length', 'max' => 10),
             array('official_website, facebook_url, twitter_url, youtube_url', 'length', 'max' => 256),
             array('description, founded_date', 'safe'),
+            array('picture', 'file', 'types' => 'jpg'),
         );
     }
 
@@ -59,6 +63,9 @@ class Group extends ActiveRecord
         return array(
             'artists' => array(self::MANY_MANY, 'Artist', 'artist_group(group_id, artist_id)'),
             'fans' => array(self::MANY_MANY, 'User', 'fan_group(group_id, fan_id)'),
+//            'admins' => array(self::MANY_MANY, 'Artist', 'artist_group(artist_id, group_id)',
+//                'condition' => 'admins.role = ' . ArtistGroup::ROLE_ADMIN),
+            'profilePicture' => array(self::BELONGS_TO, 'Picture', 'profile_picture_id'),
         );
     }
 
@@ -85,6 +92,11 @@ class Group extends ActiveRecord
         $this->created_at = time();
         $this->name = trim(mb_ucwords($this->name));
         return parent::beforeSave();
+    }
+
+    public function getAdmins()
+    {
+        return $this->artists(array('condition' => 'role = ' . ArtistGroup::ROLE_ADMIN));
     }
 
 }
