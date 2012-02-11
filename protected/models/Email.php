@@ -5,6 +5,22 @@ Yii::import('ext.mailer.EMailer');
 /**
  * This is the model class for table "email".
  *
+ * Use this class when you want to send email from your code.
+ * How to use it e.g. in your controller code:
+ *
+ * $email = new Email();
+ * $email->user_id = $user->id;
+ * $email->receiver_address = $user->email;
+ * $email->receiver_name = $person->fullName;
+ * $email->bodyData = array(
+ *     'activation_link' => l(
+ *         url('/user/activate', array('uid' => $user->id, 'token' => $user->activation_hash), true),
+ *         url('/user/activate', array('uid' => $user->id, 'token' => $user->activation_hash), true)
+ *      ),
+ * );
+ * $email->send(Email::TYPE_REGISTER);
+ * 
+ *
  * The followings are the available columns in table 'email':
  * @property integer $id
  * @property integer $user_id
@@ -31,23 +47,44 @@ Yii::import('ext.mailer.EMailer');
  */
 class Email extends ActiveRecord
 {
+    /**
+     * Used to mark email status
+     */
     const STATUS_NOT_SENT = 0;
     const STATUS_SENT = 1;
 
+    /**
+     * Used to mark email priority
+     */
     const PRIORITY_HIGHEST = 1;
     const PRIORITY_HIGH = 2;
     const PRIORITY_NORMAL = 3;
     const PRIORITY_LOW = 4;
     const PRIORITY_LOWEST = 5;
 
+    /**
+     * Used to mark email type
+     */
     const TYPE_REGISTER = 1;
     const TYPE_PASSWORD_RESET = 2;
     const TYPE_INTERNAL_ERROR = 3;
 
+    /**
+     * Used to limit email sending attempts. If email for some reason cannot be
+     * sent we need to track that and this is used to know how many times we can
+     * try.
+     */
     const MAX_SENDING_ATTEMPTS = 5;
 
-    private $_bodyData;
+    /**
+     * @var Email $mailer Emailer instance
+     */
     public $mailer;
+
+    /**
+     * Holds data needed by email view file
+     */
+    private $_bodyData;
 
     /**
      * Returns the static model of the specified AR class.
@@ -88,12 +125,28 @@ class Email extends ActiveRecord
         );
     }
 
+    /**
+     * Constructor.
+     * Initialize Emailer
+     * @param string $scenario scenario name.
+     */
     public function __construct($scenario = 'insert')
     {
         parent::__construct($scenario);
         $this->mailer = new EMailer();
     }
 
+    /**
+     * This method should be used directly in your code.
+     *
+     * It will just save email record in database, and other scripts (EmailCommand)
+     * will actually perform sending of email.
+     * If $type is provided predefined email configuration will be applied on this
+     * instance. In that case make sure you defined configuration for that type.
+     *
+     * @param integer $type Email type. See TYPE constants
+     * @return boolean whether the saving succeeds
+     */
     public function send($type = null)
     {
         $result = false;
@@ -106,6 +159,13 @@ class Email extends ActiveRecord
         return $this->save(false);
     }
 
+    /**
+     * This method is called before saving a record.
+     * It will save creation time, generate hash value, care of receiver_name,
+     * and determine if email contains many recipients.
+     *
+     * @return boolean whether the saving should be executed. Defaults to true.
+     */
     protected function beforeSave()
     {
         if ($this->isNewRecord)
@@ -132,6 +192,12 @@ class Email extends ActiveRecord
         return parent::beforeSave();
     }
 
+    /**
+     * Applies configuration for current email
+     * 
+     * @param array $type Email configuration
+     * @see getConfig
+     */
     public function applyConfig($type)
     {
         $config = $this->getConfig($type);
@@ -141,6 +207,12 @@ class Email extends ActiveRecord
         }
     }
 
+    /**
+     * Returns predefined email configuration based on provided email type
+     * 
+     * @param integer $type Email type
+     * @return array Email configuration
+     */
     public function getConfig($type)
     {
         $config = array();
@@ -181,16 +253,46 @@ class Email extends ActiveRecord
         return $config;
     }
 
+    /**
+     * Key => value pairs of variables that will be passed to email view files.
+     *
+     * Example:
+     * array(
+     *     'fullName' => 'John Doe',
+     *     'price' => '$10000',
+     * );
+     *
+     * Than in view file you have all those variables:
+     *
+     * <span>Hello <?php echo CHtml::encode($fullName); ?></span>
+     * <h3>You have earned <?php echo $price; ?></h3>
+     *
+     * It will merge bodyData with predefined recipient email address (need for email footer).
+     * Note that values will NOT be HTML encoded.
+     * 
+     * @param array $value Email data needed by email view file
+     */
     public function setBodyData($value)
     {
         $this->_bodyData = array_merge(array('email' => $this->receiver_address), $value);
     }
 
+    /**
+     * Getter
+     * @return array bodyData
+     */
     public function getBodyData()
     {
         return $this->_bodyData;
     }
 
+    /**
+     * Proccess sending email
+     *
+     * You shouldn't call this method directly when you want to send email.
+     * It is used by {@link EmailCommand}.
+     * @return boolean Whether email is sent or not
+     */
     public function processSending()
     {
         $this->mailer->Host = $this->host;
@@ -220,6 +322,12 @@ class Email extends ActiveRecord
         return $this->mailer->Send();
     }
 
+    /**
+     * Validates email address
+     *
+     * Checks remote MX record
+     * @return boolean Is email valid or not
+     */
     public function validateAddress()
     {
         if ($this->type != Email::TYPE_INTERNAL_ERROR)
@@ -237,6 +345,11 @@ class Email extends ActiveRecord
         return true; // everything is ok
     }
 
+    /**
+     * This method is invoked after each record is instantiated by a find method.
+     *
+     * If email contains many recipients, we must unpack them
+     */
     protected function afterFind()
     {
         if (!empty ($this->receivers))
