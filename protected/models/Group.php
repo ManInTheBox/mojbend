@@ -47,11 +47,11 @@ class Group extends ActiveRecord
     {
         return array(
             array('name', 'required'),
+            array('picture', 'file', 'types' => 'jpg'),
             array('name', 'length', 'max' => 64),
             array('created_at', 'length', 'max' => 10),
             array('official_website, facebook_url, twitter_url, youtube_url', 'length', 'max' => 256),
             array('description, founded_date', 'safe'),
-            array('picture', 'file', 'types' => 'jpg'),
         );
     }
 

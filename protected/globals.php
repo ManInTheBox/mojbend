@@ -106,3 +106,8 @@ function mb_ucwords($string, $encoding = 'UTF-8')
     
     return $result;
 }
+
+function p($v)
+{
+    die('<pre>' . print_r($v, true) . '</pre>');
+}

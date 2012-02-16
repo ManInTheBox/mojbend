@@ -34,7 +34,7 @@ class Picture extends ActiveRecord
     {
         return array(
             array('path', 'required'),
-            array('path', 'length', 'max'=>32),
+            array('path', 'length', 'max'=>3200),
             array('created_at', 'length', 'max'=>10),
         );
     }
@@ -63,21 +63,23 @@ class Picture extends ActiveRecord
     protected function beforeSave()
     {
         $this->created_at = time();
-        $this->store();
         return parent::beforeSave();
     }
 
-    public function store()
+    public function store($extension)
     {
         $this->path = Utility::generateHash();
         $path = path('webroot.images');
-        
         $levelOne = substr($this->path, 0, 2);
         $levelTwo = substr($this->path, 2, 2);
         $levelThree = substr($this->path, 4, 2);
 
         $fileName = substr($this->path, 6);
+
+        $realPath = "$path/$levelOne/$levelTwo/$levelThree";
         
-        mkdir("$path/$levelOne/$levelTwo/$levelThree", 0777, true);
+        mkdir($realPath, 0777, true);
+        $this->path = $realPath . '/' . $fileName . '.' . $extension;
+
     }
 }

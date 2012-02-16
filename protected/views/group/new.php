@@ -5,6 +5,9 @@
 <?php $form=$this->beginWidget('ActiveForm', array(
 	'id'=>'group-form',
 	'enableAjaxValidation'=>false,
+        'htmlOptions' => array(
+            'enctype' => 'multipart/form-data',
+        ),
 )); ?>
 
 	<?php echo $form->errorSummary($group); ?>

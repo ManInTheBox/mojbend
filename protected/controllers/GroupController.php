@@ -64,14 +64,23 @@ class GroupController extends Controller
         if (isset($_POST['Group']))
         {
             $group->attributes = $_POST['Group'];
+            $group->picture = CUploadedFile::getInstance($group, 'picture');
 
             if ($group->save())
             {
-                $artistGroup = new ArtistGroup();
-                $artistGroup->artist_id = u()->id;
-                $artistGroup->group_id = $group->id;
-                $artistGroup->role = ArtistGroup::ROLE_ADMIN;
-                $artistGroup->save(false);
+                $picture = new Picture();
+                $picture->store($group->picture->getExtensionName());
+                $group->picture->saveAs($picture->path);
+                $picture->save();
+
+                $group->profile_picture_id = $picture->id;
+                $group->save();
+
+//                $artistGroup = new ArtistGroup();
+//                $artistGroup->artist_id = u()->id;
+//                $artistGroup->group_id = $group->id;
+//                $artistGroup->role = ArtistGroup::ROLE_ADMIN;
+//                $artistGroup->save(false);
 
                 $this->setFlashSuccess(t('Group succesfully created.'));
                 $this->redirect(array('/group/list'));
