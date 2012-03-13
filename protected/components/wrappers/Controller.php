@@ -23,6 +23,8 @@ class Controller extends CController
      */
     public $breadcrumbs = array();
 
+    public $sidebar = '//layouts/sidebar';
+
     public function setFlash($key, $value, $defaultValue = null)
     {
         u()->setFlash($key, $value, $defaultValue);

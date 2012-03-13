@@ -5,15 +5,16 @@
         <meta name="language" content="en" />
 
         <!-- blueprint CSS framework -->
-        <link rel="stylesheet" type="text/css" href="<?php echo bu(); ?>/css/screen.css" media="screen, projection" />
-        <link rel="stylesheet" type="text/css" href="<?php echo bu(); ?>/css/print.css" media="print" />
+<!--        <link rel="stylesheet" type="text/css" href="<?php echo bu(); ?>/css/screen.css" media="screen, projection" />
+        <link rel="stylesheet" type="text/css" href="<?php echo bu(); ?>/css/print.css" media="print" />-->
         <!--[if lt IE 8]>
 	<link rel="stylesheet" type="text/css" href="<?php echo bu(); ?>/css/ie.css" media="screen, projection" />
 	<![endif]-->
 
-        <link rel="stylesheet" type="text/css" href="<?php echo bu(); ?>/css/main.css" />
-        <link rel="stylesheet" type="text/css" href="<?php echo bu(); ?>/css/form.css" />
+<!--        <link rel="stylesheet" type="text/css" href="<?php echo bu(); ?>/css/main.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo bu(); ?>/css/form.css" />-->
 
+        <link rel="stylesheet" type="text/css" href="<?php echo bu(); ?>/css/style.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 
 
@@ -22,41 +23,45 @@
 
     <body>
 
-        <div class="container" id="page">
+        <div id="wrapper">
+            <div id="header-wrapper">
+                <div id="header">
+                    <div id="logo">
+                        <h1><a href="<?php echo bu(); ?>">Mojbend.com</a></h1>
+                        <p>sva ta muzika...</p>
+                    </div>
+                    <div id="menu">
 
-            <div id="header">
-                <div id="logo"><?php echo CHtml::encode(Yii::app()->name); ?></div>
-            </div><!-- header -->
-
-            <div id="mainmenu">
-                <?php
-                $this->widget('zii.widgets.CMenu', array(
-                    'items' => array(
-                        array('label' => 'Home', 'url' => array('/site/index')),
-                        array('label' => 'About', 'url' => array('/site/page', 'view' => 'about')),
-                        array('label' => 'Contact', 'url' => array('/site/contact')),
-                        array('label' => 'Login', 'url' => array('/user/login'), 'visible' => Yii::app()->user->isGuest),
-                        array('label' => 'Logout (' . Yii::app()->user->name . ')', 'url' => array('/user/logout'), 'visible' => !Yii::app()->user->isGuest)
-                    ),
-                ));
-                ?>
-                </div><!-- mainmenu -->
-            <?php if (isset($this->breadcrumbs)): ?>
-            <?php
-                    $this->widget('zii.widgets.CBreadcrumbs', array(
-                        'links' => $this->breadcrumbs,
-                    )); ?><!-- breadcrumbs -->
-<?php endif ?>
-
-                <?php echo $content; ?>
-
-                <div id="footer">
-    		Copyright &copy; <?php echo date('Y'); ?> by My Company.<br/>
-    		All Rights Reserved.<br/>
-<?php echo Yii::powered(); ?>
-            </div><!-- footer -->
-
-        </div><!-- page -->
-
+                        <?php
+                        $this->widget('zii.widgets.CMenu', array(
+                            'activeCssClass' => 'current_page_item',
+                            'items' => array(
+                                array('label' => 'Pocetna', 'url' => array('/site/index')),
+                                array('label' => 'About', 'url' => array('/site/page', 'view' => 'about')),
+                                array('label' => 'Contact', 'url' => array('/site/contact')),
+                                array('label' => 'Login', 'url' => array('/user/login'), 'visible' => Yii::app()->user->isGuest),
+                                array('label' => 'Logout (' . u()->name . ')', 'url' => array('/user/logout'), 'visible' => !guest())
+                            ),
+                        ));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <!-- end #header -->
+            <div id="page">
+                <div id="page-bgtop">
+                    <div id="page-bgbtm">
+                        <div id="content">
+                            <?php echo $content; ?>
+                        </div>
+                        <?php echo $this->renderPartial($this->sidebar); ?>
+                        <div style="clear: both;">&nbsp;</div>
+                    </div>
+                </div>
+            </div>
+            <div id="footer">
+                <p>mojbend.com</p>
+            </div>
+        </div>
     </body>
 </html>
