@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 28, 2012 at 11:29 PM
--- Server version: 5.1.49
--- PHP Version: 5.3.3-1ubuntu9.7
+-- Generation Time: Mar 15, 2012 at 09:18 PM
+-- Server version: 5.1.61
+-- PHP Version: 5.3.3-1ubuntu9.10
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -41,6 +41,27 @@ CREATE TABLE IF NOT EXISTS `artist` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `artist_group`
+--
+
+CREATE TABLE IF NOT EXISTS `artist_group` (
+  `artist_id` int(11) NOT NULL,
+  `group_id` int(11) NOT NULL,
+  `created_at` int(10) unsigned NOT NULL,
+  `role` int(11) NOT NULL,
+  PRIMARY KEY (`artist_id`,`group_id`),
+  KEY `group_id` (`group_id`),
+  KEY `artist_id` (`artist_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `artist_group`
+--
+
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `artist_instrument`
 --
 
@@ -48,7 +69,8 @@ CREATE TABLE IF NOT EXISTS `artist_instrument` (
   `artist_id` int(11) NOT NULL,
   `list_instrument_id` int(11) NOT NULL,
   `level` tinyint(4) DEFAULT NULL,
-  KEY `artist_id` (`artist_id`,`list_instrument_id`),
+  PRIMARY KEY (`artist_id`,`list_instrument_id`),
+  KEY `artist_id` (`artist_id`),
   KEY `list_instrument_id` (`list_instrument_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -86,30 +108,10 @@ CREATE TABLE IF NOT EXISTS `email` (
   `subject` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
   `body` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
-
---
--- Dumping data for table `email`
---
-
-INSERT INTO `email` (`id`, `user_id`, `created_at`, `status`, `type`, `priority`, `sending_time`, `sending_counter`, `hash`, `error_message`, `host`, `host_name`, `protocol`, `charset`, `from_name`, `from_address`, `receiver_name`, `receiver_address`, `receivers`, `subject`, `body`) VALUES
-(1, 1, 1327237930, 1, 1, 1, 1327237932, 1, '8589651d5715bdaeca20a561c243b63f', NULL, 'localhost', 'master.mojbend.rs', 'smtp', 'UTF-8', 'Mojbend.rs', 'noreply@mojbend.rs', 'zarko.stankovic@itsmyplay.com', 'zarko.stankovic@itsmyplay.com', NULL, 'Mojbend.rs Account Activation', 'OVO JE REGISTER MEJL<br />\n<a href="http://localhost/mojbend/webroot/user/activate?uid=1&amp;token=9690790f8c49be2700118989fa02a734">http://localhost/mojbend/webroot/user/activate?uid=1&token=9690790f8c49be2700118989fa02a734</a>');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `fan`
---
-
-CREATE TABLE IF NOT EXISTS `fan` (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT,
-  `list_fan_type_id` int(11) NOT NULL,
-  PRIMARY KEY (`user_id`),
-  KEY `list_fan_id` (`list_fan_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 --
--- Dumping data for table `fan`
+-- Dumping data for table `email`
 --
 
 
@@ -123,7 +125,8 @@ CREATE TABLE IF NOT EXISTS `fan_artist` (
   `fan_id` int(11) NOT NULL,
   `artist_id` int(11) NOT NULL,
   `created_at` int(10) unsigned NOT NULL,
-  KEY `fan_id` (`fan_id`,`artist_id`),
+  PRIMARY KEY (`fan_id`,`artist_id`),
+  KEY `fan_id` (`fan_id`),
   KEY `artist_id` (`artist_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -142,7 +145,8 @@ CREATE TABLE IF NOT EXISTS `fan_group` (
   `fan_id` int(11) NOT NULL,
   `group_id` int(11) NOT NULL,
   `created_at` int(10) unsigned NOT NULL,
-  KEY `fan_id` (`fan_id`,`group_id`),
+  PRIMARY KEY (`fan_id`,`group_id`),
+  KEY `fan_id` (`fan_id`),
   KEY `group_id` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -167,17 +171,50 @@ CREATE TABLE IF NOT EXISTS `group` (
   `facebook_url` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
   `twitter_url` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
   `youtube_url` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=4 ;
+  `profile_picture_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `profile_picture_id` (`profile_picture_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=12 ;
 
 --
 -- Dumping data for table `group`
 --
 
-INSERT INTO `group` (`id`, `name`, `description`, `created_at`, `founded_date`, `official_website`, `facebook_url`, `twitter_url`, `youtube_url`) VALUES
-(1, 'SdfSdfsdSsdfSsdf', '', 1327258423, '0000-00-00', '', '', '', ''),
-(2, 'Sdf Sdf Www Zzzz Eee', '', 1327258449, '0000-00-00', '', '', '', ''),
-(3, 'S Sfd Dddfs Df Sdf', '', 1327356785, '0000-00-00', '', '', '', '');
+INSERT INTO `group` (`id`, `name`, `description`, `created_at`, `founded_date`, `official_website`, `facebook_url`, `twitter_url`, `youtube_url`, `profile_picture_id`) VALUES
+(1, '', NULL, 1329427751, NULL, NULL, NULL, NULL, NULL, 0),
+(2, 'Asdfasdf', '', 1329428856, '0000-00-00', '', '', '', '', 0),
+(3, 'Aaaaaaaaa', '', 1329430603, '0000-00-00', '', '', '', '', 0),
+(4, 'Adfasdf', '', 1329430668, '0000-00-00', '', '', '', '', 0),
+(5, 'Ccxvcvxcv', '', 1329431008, '0000-00-00', '', '', '', '', 0),
+(6, 'Asdf', '', 1329431093, '0000-00-00', '', '', '', '', 0),
+(7, 'Adfasdfasdf', '', 1329431177, '0000-00-00', '', '', '', '', 0),
+(8, 'Asdfasdf', '', 1329431241, '0000-00-00', '', '', '', '', 0),
+(9, 'Ccccccccccccc', '', 1329431319, '0000-00-00', '', '', '', '', 0),
+(10, 'Ccccxcvzxcvzxcvz', '', 1329431380, '0000-00-00', '', '', '', '', 0),
+(11, 'Nnn', '', 1329431429, '0000-00-00', '', '', '', '', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `group_member_request`
+--
+
+CREATE TABLE IF NOT EXISTS `group_member_request` (
+  `sender_id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
+  `group_id` int(11) NOT NULL,
+  `created_at` int(10) unsigned NOT NULL,
+  `status` tinyint(4) NOT NULL,
+  PRIMARY KEY (`sender_id`,`receiver_id`),
+  KEY `sender_id` (`sender_id`),
+  KEY `receiver_id` (`receiver_id`),
+  KEY `group_id` (`group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `group_member_request`
+--
+
 
 -- --------------------------------------------------------
 
@@ -226,23 +263,6 @@ INSERT INTO `list_artist_type` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `list_fan_type`
---
-
-CREATE TABLE IF NOT EXISTS `list_fan_type` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
---
--- Dumping data for table `list_fan_type`
---
-
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `list_instrument`
 --
 
@@ -251,12 +271,15 @@ CREATE TABLE IF NOT EXISTS `list_instrument` (
   `name` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `description` text COLLATE utf8_unicode_ci,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
 
 --
 -- Dumping data for table `list_instrument`
 --
 
+INSERT INTO `list_instrument` (`id`, `name`, `description`) VALUES
+(1, 'Guitar', 'This is very good instrument...'),
+(2, 'Violin', NULL);
 
 -- --------------------------------------------------------
 
@@ -297,11 +320,28 @@ CREATE TABLE IF NOT EXISTS `person` (
 --
 
 INSERT INTO `person` (`user_id`, `first_name`, `last_name`, `gender`, `birth_date`) VALUES
-(1, '', '', NULL, '0000-00-00'),
-(2, '', '', NULL, '0000-00-00'),
-(3, 'Asdf', 'Eeee', NULL, '0000-00-00'),
-(4, 'ee', 'sdfsdf', NULL, '0000-00-00'),
-(5, 'Sdfsdf', 'Wewer', NULL, '0000-00-00');
+(1, 'Fda', 'Afd', NULL, '0000-00-00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `picture`
+--
+
+CREATE TABLE IF NOT EXISTS `picture` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `path` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `picture`
+--
+
+INSERT INTO `picture` (`id`, `path`, `created_at`) VALUES
+(1, '/var/www/mojbend/webroot/images/30/ae/95/bdd6e6ba42ae88428808ce9ac8.jpg', 1329431380),
+(2, '/var/www/mojbend/webroot/images/81/07/9f/08d108b7176bb6d03d2bbf6dc6.jpg', 1329431429);
 
 -- --------------------------------------------------------
 
@@ -340,42 +380,16 @@ CREATE TABLE IF NOT EXISTS `user` (
   `cookie_token` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `logged_in` tinyint(4) DEFAULT '0',
   `activation_hash` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `url_alias` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `username` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `email`, `password`, `salt`, `status`, `created_at`, `language`, `cookie_token`, `logged_in`, `activation_hash`, `url_alias`) VALUES
-(1, 'zarko.stankovic@itsmyplay.com', '38ea376a2f70f5276552e6feb32a56b5', 'f7abf1b61c220e0b326770348bb58691', 2, 1327237930, 'sr_yu', '3aa14f0060251d5ba8ceb812861d2062', 1, '9690790f8c49be2700118989fa02a734', 'zare'),
-(2, 'test1@test.com', 'e2f8be6d4ce7bee8bde373e479a1e2d9', '2967701ac13420f8ad1f8f60a46fb015', 2, 1327241093, 'sr_yu', '35a286dbec3276d97b8aab6e53fbf973', 0, '8882d4efe73475d48338de2a50727b70', NULL),
-(3, 'test2@test.com', '8c99a1c29b1f4fe79cee90d2bb90a3a5', '9ce697246cc81d3d1a12dce0d7333dc7', 2, 1327258201, 'sr_yu', '0d2eec10cbe78dbbbb07376b81291da9', 0, 'e99ab64e47c5a905e2f463e7b5ab74ea', NULL),
-(4, 'test3@test.com', '7cb67347e84a0f491b329e68068c389e', 'c00edc4dd0272b51b32eb32b266db655', 1, 1327258315, 'sr_yu', NULL, 0, '6e96016117b0bcf041d4f80f9fa53854', NULL),
-(5, 'test4@test.com', 'e7fa084454c15f3c2d5e2ce853437b2c', 'b6e35ecf13a7bd6c4d563da5dcec9255', 1, 1327258369, 'sr_yu', NULL, 0, '69f93c2c9e9034963e382a4b8364f94b', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `user_group`
---
-
-CREATE TABLE IF NOT EXISTS `user_group` (
-  `user_id` int(11) NOT NULL,
-  `group_id` int(11) NOT NULL,
-  `created_at` int(11) NOT NULL,
-  `status` tinyint(4) NOT NULL,
-  `list_role_id` int(11) NOT NULL,
-  KEY `user_id` (`user_id`,`group_id`),
-  KEY `list_group_role_id` (`list_role_id`),
-  KEY `group_id` (`group_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `user_group`
---
-
+INSERT INTO `user` (`id`, `email`, `password`, `salt`, `status`, `created_at`, `language`, `cookie_token`, `logged_in`, `activation_hash`, `username`) VALUES
+(1, 'test1@test.com', 'fc1f6513ad334132b3a8692edeb720be', '0ae56a9720c45a69403098ed011e77ca', 2, 1329001302, 'sr_yu', '11f053ba998cca2b4256f9ccb61544eb', 1, '668374f57bc0f88064580c252329e25f', NULL);
 
 -- --------------------------------------------------------
 
@@ -390,46 +404,27 @@ CREATE TABLE IF NOT EXISTS `user_log` (
   `ip_address` int(10) unsigned DEFAULT NULL,
   `user_agent` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_id_idx` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=37 ;
+  KEY `user_id_idx` (`user_id`),
+  KEY `ip_address` (`ip_address`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=13 ;
 
 --
 -- Dumping data for table `user_log`
 --
 
 INSERT INTO `user_log` (`id`, `user_id`, `created_at`, `ip_address`, `user_agent`) VALUES
-(5, 1, 1327237961, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(6, 1, 1327238272, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(7, 1, 1327245198, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(8, 1, 1327245209, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(9, 1, 1327245433, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(10, 1, 1327245841, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(11, 1, 1327245871, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(12, 1, 1327245895, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(13, 1, 1327245937, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(14, 1, 1327245949, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(15, 1, 1327246022, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(16, 1, 1327246118, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(17, 1, 1327246181, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(18, 2, 1327246463, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(19, 1, 1327248064, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(20, 1, 1327248179, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(21, 1, 1327248450, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(22, 1, 1327248472, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(23, 1, 1327248558, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(24, 1, 1327248585, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(25, 1, 1327249435, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(26, 1, 1327249930, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(27, 1, 1327250930, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(28, 1, 1327251016, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(29, 1, 1327251043, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(30, 1, 1327256406, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(31, 1, 1327256948, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(32, 1, 1327257666, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(33, 3, 1327258218, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(34, 1, 1327258398, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(35, 1, 1327352046, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7'),
-(36, 1, 1327426663, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.75 Safari/535.7');
+(1, 1, 1329001314, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.77 Safari/535.7'),
+(2, 1, 1329427618, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.46 Safari/535.11'),
+(3, 1, 1330813858, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11'),
+(4, 1, 1330813880, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11'),
+(5, 1, 1331673632, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.78 Safari/535.11'),
+(6, 1, 1331674434, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.78 Safari/535.11'),
+(7, 1, 1331675394, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.78 Safari/535.11'),
+(8, 1, 1331747544, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.79 Safari/535.11'),
+(9, 1, 1331839729, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.79 Safari/535.11'),
+(10, 1, 1331840278, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.79 Safari/535.11'),
+(11, 1, 1331841904, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.79 Safari/535.11'),
+(12, 1, 1331842043, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.79 Safari/535.11');
 
 --
 -- Constraints for dumped tables
@@ -443,6 +438,13 @@ ALTER TABLE `artist`
   ADD CONSTRAINT `artist_ibfk_2` FOREIGN KEY (`list_artist_type_id`) REFERENCES `list_artist_type` (`id`);
 
 --
+-- Constraints for table `artist_group`
+--
+ALTER TABLE `artist_group`
+  ADD CONSTRAINT `artist_group_ibfk_1` FOREIGN KEY (`artist_id`) REFERENCES `artist` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `artist_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `group` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `artist_instrument`
 --
 ALTER TABLE `artist_instrument`
@@ -450,25 +452,26 @@ ALTER TABLE `artist_instrument`
   ADD CONSTRAINT `artist_instrument_ibfk_2` FOREIGN KEY (`list_instrument_id`) REFERENCES `list_instrument` (`id`);
 
 --
--- Constraints for table `fan`
---
-ALTER TABLE `fan`
-  ADD CONSTRAINT `fan_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fan_ibfk_2` FOREIGN KEY (`list_fan_type_id`) REFERENCES `list_fan_type` (`id`);
-
---
 -- Constraints for table `fan_artist`
 --
 ALTER TABLE `fan_artist`
-  ADD CONSTRAINT `fan_artist_ibfk_1` FOREIGN KEY (`fan_id`) REFERENCES `fan` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fan_artist_ibfk_1` FOREIGN KEY (`fan_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fan_artist_ibfk_2` FOREIGN KEY (`artist_id`) REFERENCES `artist` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `fan_group`
 --
 ALTER TABLE `fan_group`
-  ADD CONSTRAINT `fan_group_ibfk_1` FOREIGN KEY (`fan_id`) REFERENCES `fan` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fan_group_ibfk_1` FOREIGN KEY (`fan_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fan_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `group` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `group_member_request`
+--
+ALTER TABLE `group_member_request`
+  ADD CONSTRAINT `group_member_request_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `artist` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `group_member_request_ibfk_2` FOREIGN KEY (`receiver_id`) REFERENCES `artist` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `group_member_request_ibfk_3` FOREIGN KEY (`group_id`) REFERENCES `group` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `internal_error_log`
@@ -487,14 +490,6 @@ ALTER TABLE `list_role`
 --
 ALTER TABLE `person`
   ADD CONSTRAINT `person_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `user_group`
---
-ALTER TABLE `user_group`
-  ADD CONSTRAINT `user_group_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `user_group_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `group` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `user_group_ibfk_3` FOREIGN KEY (`list_role_id`) REFERENCES `list_role` (`id`);
 
 --
 -- Constraints for table `user_log`
