@@ -59,7 +59,7 @@ class UserController extends Controller
 
     public function actionRegister()
     {
-        $this->sidebar = '//layouts/blank_sidebar';
+//        $this->sidebar = '//layouts/_nosidebar';
         $user = new User();
         $person = new Person();
 

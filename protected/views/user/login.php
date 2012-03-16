@@ -1,32 +1,34 @@
 <?php $this->renderFlash(); ?>
 
-<div class="form">
-<?php $form=$this->beginWidget('ActiveForm', array(
-	'id'=>'login-form',
-)); ?>
+<!--<div class="form">-->
+    <?php
+    $form = $this->beginWidget('ActiveForm', array(
+                'id' => 'login-form',
+            ));
+    ?>
 
     <?php echo $form->errorSummary($loginForm); ?>
-	<div class="row">
-		<?php echo $form->labelEx($loginForm,'email'); ?>
-		<?php echo $form->textField($loginForm,'email'); ?>
-		<?php echo $form->error($loginForm,'email'); ?>
-	</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($loginForm,'password'); ?>
-		<?php echo $form->passwordField($loginForm,'password'); ?>
-		<?php echo $form->error($loginForm,'password'); ?>
-	</div>
+    <table>
+        <tr>
+            <td><?php echo $form->labelEx($loginForm, 'email'); ?></td>
+            <td><?php echo $form->textField($loginForm, 'email', array('size' => 55)); ?></td>
+        </tr>
+        <tr>
+            <td><?php echo $form->labelEx($loginForm, 'password'); ?></td>
+            <td><?php echo $form->passwordField($loginForm, 'password', array('size' => 55)); ?></td>
+        </tr>
+        <tr>
+            <td><?php echo $form->label($loginForm, 'rememberMe'); ?></td>
+            <td><?php echo $form->checkBox($loginForm, 'rememberMe'); ?></td>
+        </tr>
 
-	<div class="row rememberMe">
-		<?php echo $form->checkBox($loginForm,'rememberMe'); ?>
-		<?php echo $form->label($loginForm,'rememberMe'); ?>
-		<?php echo $form->error($loginForm,'rememberMe'); ?>
-	</div>
+        <tr>
+            <td class="button">
+                <?php echo CHtml::submitButton('Uloguj se'); ?>
+            </td>
+        </tr>
 
-	<div class="row buttons">
-		<?php echo CHtml::submitButton('Login'); ?>
-	</div>
-
-<?php $this->endWidget(); ?>
-</div><!-- form -->
+    </table>
+        <?php $this->endWidget(); ?>
+<!--</div> form -->

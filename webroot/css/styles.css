@@ -102,10 +102,15 @@ fieldset form {
 	padding-top: 15px;
 }
 
-fieldset p label {
+fieldset p {
 	float: left;
 	width: 150px;
 }
+
+/*label {
+    float: left;
+    width: 100px;
+}*/
 
 form input, form select, form textarea {
 	padding: 5px;
@@ -143,7 +148,7 @@ form.searchform p {
 
 
 span.required {
-	color: #ff0000;
+	color: #FCACAC;
 }
 
 h1 {
@@ -707,4 +712,52 @@ div#footer-links p {
 	color: #eee;
 	font-weight: bold;
 	text-decoration: underline;
+}
+
+.errorMessage {
+    color: #FF0000;
+}
+
+input.error {
+    border: 1px solid #FCACAC;
+}
+
+td.button {
+    border: none;
+    width: 300px;
+}
+
+td.button input {
+    font-weight: bold;
+color: #FFF;
+    padding: 10px;
+    width: 150px;
+	text-shadow:-1px -1px #CE5709;
+    background: #F87B27 url('./../images/frontpage-link.png') repeat-x scroll top left;
+/*    	border: 1px solid #333;*/
+
+}
+td.button input:hover {
+    	background: #E5620A none;
+
+    color: #FFF;
+/*    padding: 10px;
+    width: 100px;
+    background-color: #F4F4F4;*/
+}
+
+.errorSummary {
+    display: block;
+    border: 1px solid #FFBABA;
+    background: #FFEBEB;
+    padding: 10px;
+}
+.errorSummary p {
+    font-size: 1.1em;
+}
+.errorSummary ul {
+    padding: 0 10px 10px 20px;
+    margin: 0;
+    list-style: none;
+/*    margin-bottom: 10px;*/
 }

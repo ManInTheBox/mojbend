@@ -84,7 +84,8 @@ class User extends ActiveRecord
             'email' => t('Email'),
             'password' => t('Password'),
             'language' => t('Language'),
-            'is_artist' => t('Are you artist?'),
+            'is_artist' => t('Da li ste muzicar?'),
+//            'is_artist' => t('Are you artist?'),
         );
     }
     
