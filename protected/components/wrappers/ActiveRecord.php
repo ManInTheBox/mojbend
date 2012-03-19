@@ -8,5 +8,11 @@
  */
 class ActiveRecord extends CActiveRecord
 {
-    
+    public $emptyMessage;
+
+    public function __construct($scenario = 'insert')
+    {
+        $this->emptyMessage = t('Nema informacija.');
+        parent::__construct($scenario);
+    }
 }

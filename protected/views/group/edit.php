@@ -1,7 +1,6 @@
 <?php echo $this->renderFlash(); ?>
 
-
-<div class="form">
+<div id="form">
 
 <?php $form=$this->beginWidget('ActiveForm', array(
 	'id'=>'group-form',
@@ -10,50 +9,47 @@
 
 	<?php echo $form->errorSummary($group); ?>
 
-	<div class="row">
-		<?php echo $form->labelEx($group, 'name'); ?>
-		<?php echo $form->textField($group,'name'); ?>
-		<?php echo $form->error($group,'name'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($group,'description'); ?>
-		<?php echo $form->textArea($group,'description'); ?>
-		<?php echo $form->error($group,'description'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($group,'founded_date'); ?>
-		<?php echo $form->textField($group,'founded_date'); ?>
-		<?php echo $form->error($group,'founded_date'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($group,'official_website'); ?>
-		<?php echo $form->textField($group,'official_website'); ?>
-		<?php echo $form->error($group,'official_website'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($group,'facebook_url'); ?>
-		<?php echo $form->textField($group,'facebook_url'); ?>
-		<?php echo $form->error($group,'facebook_url'); ?>
-	</div>
-	<div class="row">
-		<?php echo $form->labelEx($group,'twitter_url'); ?>
-		<?php echo $form->textField($group,'twitter_url'); ?>
-		<?php echo $form->error($group,'twitter_url'); ?>
-	</div>
-	<div class="row">
-		<?php echo $form->labelEx($group,'youtube_url'); ?>
-		<?php echo $form->textField($group,'youtube_url'); ?>
-		<?php echo $form->error($group,'youtube_url'); ?>
-	</div>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton('Save'); ?>
-	</div>
-
+<table>
+    <tr>
+        <td><?php echo $form->labelEx($group, 'name'); ?></td>
+        <td><?php echo $form->textField($group,'name', array('style' => 'width: 420px;')); ?></td>
+    </tr>
+    <tr>
+        <td><?php echo $form->labelEx($group,'founded_date'); ?></td>
+        <td><?php echo $form->textField($group,'founded_date', array('style' => 'width: 420px;')); ?></td>
+    </tr>
+    <tr>
+        <td><?php echo $form->labelEx($group,'official_website'); ?></td>
+        <td><?php echo $form->textField($group,'official_website', array('style' => 'width: 420px;')); ?></td>
+    </tr>
+    <tr>
+        <td><?php echo $form->labelEx($group,'facebook_url'); ?></td>
+        <td><?php echo $form->textField($group,'facebook_url', array('style' => 'width: 420px;')); ?></td>
+    </tr>
+    <tr>
+        <td><?php echo $form->labelEx($group,'twitter_url'); ?></td>
+        <td><?php echo $form->textField($group,'twitter_url', array('style' => 'width: 420px;')); ?></td>
+    </tr>
+    <tr>
+        <td><?php echo $form->labelEx($group,'youtube_url'); ?></td>
+        <td><?php echo $form->textField($group,'youtube_url', array('style' => 'width: 420px;')); ?></td>
+    </tr>
+    <tr>
+        <td><?php echo $form->labelEx($group,'description'); ?></td>
+        <td><?php echo $form->textArea($group,'description', array('style' => 'width: 420px; height: 100px;')); ?></td>
+    </tr>
+    <tr>
+        <td class="button"><?php echo CHtml::submitButton(t('Sačuvaj izmene')); ?></td>
+    </tr>
+</table>
 <?php $this->endWidget(); ?>
 
-</div><!-- form -->
+</div>
+
+<script type="text/javascript">
+    $('#Group_founded_date').datepicker({
+        dateFormat: 'dd.mm.yy',
+        changeYear: true,
+        yearRange: '1920:<?php echo date('Y'); ?>'
+    });
+</script>

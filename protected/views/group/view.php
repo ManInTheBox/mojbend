@@ -1,8 +1,56 @@
-<h1><?php echo $group->name; ?></h1>
+<table>
+    <tr>
+        <td>
+            <h4><?php echo l($group->name, array()); ?></h4>
+            <?php
+                if (true) // is owner
+                {
+                    echo l(Html::tag('input', array('type' => 'button', 'value' => t('Izmeni'))), array('/group/edit', 'gid' => $group->id), array('class' => 'button'));
+                    echo '<br />' . l('pozovi clanove', '#', array('id' => 'inviteMembers'));
+                }
+            ?>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="<?php echo $group->profilePicture->shortPath; ?>" class="fancybox">
+                <img alt="<?php echo e($group->name); ?>" title="<?php echo e($group->name); ?>" src="<?php echo $group->profilePicture->shortPath; ?>" />
+            </a>
+                    <?php echo l('postani clan', '#', array('id' => 'joinGroup')); ?>
+        </td>
+        <td>
+            <strong><?php echo t('O bendu:'); ?></strong><br /><br /><br />
+            <blockquote>
+                <?php echo $group->description ?: 'Bend nije ostavio podatke.'; ?>
+            </blockquote>
+        </td>
+    </tr>
+    <tr>
+        <td><?php echo e($group->getAttributeLabel('founded_date')); ?>:</td>
+        <td><?php echo e($group->founded_date); ?></td>
+    </tr>
+    <tr>
+        <td><?php echo e($group->getAttributeLabel('location')); ?>:</td>
+        <td><?php echo e($group->location); ?></td>
+    </tr>
+    <tr>
+        <td><?php echo e($group->getAttributeLabel('official_website')); ?>:</td>
+        <td><?php echo ($group->official_website !== $group->emptyMessage) ? l(e($group->official_website), $group->official_website, array('target' => '_blank')) : $group->emptyMessage; ?></td>
+    </tr>
+    <tr>
+        <td><?php echo t('Bend na društvenim mrežama'); ?>:</td>
+        <td>
+            <?php
+                echo ($group->facebook_url !== $group->emptyMessage) ? l(e($group->facebook_url), $group->facebook_url, array('target' => '_blank')) : '';
+                echo ($group->twitter_url !== $group->emptyMessage) ? '<br />' . l(e($group->twitter_url), $group->twitter_url, array('target' => '_blank')) : '';
+                echo ($group->youtube_url !== $group->emptyMessage) ? '<br />' . l(e($group->youtube_url), $group->youtube_url, array('target' => '_blank')) : '';
+            ?>
+        </td>
+    </tr>
+</table>
+    
 
-        <?php echo l('pozovi clanove', '#', array('id' => 'inviteMembers')); ?><br />
-                <?php echo l('postani clan', '#', array('id' => 'joinGroup')); ?><br />
-                <?php echo l('edit', array('/group/edit', 'gid' => $group->id)); ?><br />
+
 
 <script type="text/javascript">
 $(function() {

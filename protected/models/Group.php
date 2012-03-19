@@ -10,6 +10,7 @@
  * @property string $created_at
  * @property string $founded_date
  * @property string $official_website
+ * @property string $location
  * @property string $facebook_url
  * @property string $twitter_url
  * @property string $youtube_url
@@ -17,6 +18,7 @@
  *
  * @property Artist[] $artists
  * @property User[] $fans
+ * @property Picture[] $pictures
  */
 class Group extends ActiveRecord
 {
@@ -47,7 +49,8 @@ class Group extends ActiveRecord
     {
         return array(
             array('name', 'required'),
-            array('picture', 'file', 'types' => 'jpg'),
+            array('picture', 'file', 'allowEmpty' => true, 'types' => 'jpg, gif, png'),
+            array('official_website, facebook_url, twitter_url, youtube_url', 'url', 'defaultScheme' => 'http'),
             array('name', 'length', 'max' => 64),
             array('created_at', 'length', 'max' => 10),
             array('official_website, facebook_url, twitter_url, youtube_url', 'length', 'max' => 256),
@@ -66,6 +69,7 @@ class Group extends ActiveRecord
 //            'admins' => array(self::MANY_MANY, 'Artist', 'artist_group(artist_id, group_id)',
 //                'condition' => 'admins.role = ' . ArtistGroup::ROLE_ADMIN),
             'profilePicture' => array(self::BELONGS_TO, 'Picture', 'profile_picture_id'),
+            'pictures' => array(self::HAS_MANY, 'Picture', 'group_id'),
         );
     }
 
@@ -75,15 +79,14 @@ class Group extends ActiveRecord
     public function attributeLabels()
     {
         return array(
-            'id' => t('ID'),
-            'name' => t('Name'),
-            'description' => t('Description'),
-            'created_at' => t('Created At'),
-            'founded_date' => t('Founded Date'),
-            'official_website' => t('Official Website'),
-            'facebook_url' => t('Facebook Url'),
-            'twitter_url' => t('Twitter Url'),
-            'youtube_url' => t('Youtube Url'),
+            'name' => t('Naziv'),
+            'description' => t('Opis'),
+            'founded_date' => t('Datum osnivanja'),
+            'official_website' => t('Zvanični Website'),
+            'location' => t('Lokacija'),
+            'facebook_url' => t('Facebook'),
+            'twitter_url' => t('Twitter'),
+            'youtube_url' => t('Youtube'),
         );
     }
 
@@ -97,6 +100,36 @@ class Group extends ActiveRecord
     public function getAdmins()
     {
         return $this->artists(array('condition' => 'role = ' . ArtistGroup::ROLE_ADMIN));
+    }
+
+    public function __get($name)
+    {
+        $v = parent::__get($name);
+
+        if ($this->getScenario() == 'preview')
+        {
+            if (empty($v) || $v === '0000-00-00')
+            {
+                return $this->emptyMessage;
+            }
+            else
+            {
+                return $v;
+            }
+        }
+        else
+        {
+            return $v;
+        }
+    }
+
+    public function localizeDate($separator = '.', $explode = '-')
+    {
+        $dateParts = explode($explode, $this->founded_date);
+        if (!empty($dateParts))
+        {
+            $this->founded_date = "$dateParts[2]$separator$dateParts[1]$separator$dateParts[0]";
+        }
     }
 
 }
