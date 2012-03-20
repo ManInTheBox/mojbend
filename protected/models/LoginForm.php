@@ -39,8 +39,8 @@ class LoginForm extends CFormModel
     {
         return array(
             'email' => t('E-mail'),
-            'password' => t('Password'),
-            'rememberMe' => t('Remember me next time'),
+            'password' => t('Lozinka'),
+            'rememberMe' => t('Zapamti me za sledeći put'),
         );
     }
 
@@ -58,22 +58,22 @@ class LoginForm extends CFormModel
                 switch ($this->_identity->errorCode)
                 {
                     case UserIdentity::ERROR_STATUS_INACTIVE:
-                        $this->addError('password', t('Your account is not active.'));
+                        $this->addError('password', t('Vaš nalog još uvek nije aktivan.'));
                         break;
                     case UserIdentity::ERROR_STATUS_PENDING:
                         $user = User::model()->findByAttributes(array('email' => $this->email));
-                        $this->addError('password', t('Your account is not activated. Please click link in email.<br />{link}', array(
+                        $this->addError('password', t('Vaš nalog još uvek nije aktiviran. Molimo Vas pratite link koji smo Vam poslali u e-mail poruci.<br />{link}', array(
                             '{link}' => l('ACTIVATE', url('/user/activate', array('uid' => $user->id, 'token' => $user->activation_hash))),
                         )));
                         break;
                     case UserIdentity::ERROR_STATUS_SUSPENDED:
-                        $this->addError('password', t('Your account is suspended.'));
+                        $this->addError('password', t('Vaš nalog je suspendovan.'));
                         break;
                     case UserIdentity::ERROR_STATUS_DEACTIVATED:
-                        $this->addError('password', t('Your account is deactivated.'));
+                        $this->addError('password', t('Vaš nalog je deaktiviran.'));
                         break;
                     default:
-                        $this->addError('password', t('Incorrect email or password.'));
+                        $this->addError('password', t('Netačna e-mail adresa ili lozinka.'));
                         break;
                 }
             }

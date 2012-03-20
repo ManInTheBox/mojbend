@@ -774,3 +774,17 @@ input.error {
     margin: 0;
     font-size: 1.1em;
 }
+
+.infoSummary {
+    display: block;
+    border: 1px solid #9EED8E;
+    background: YELLOW;
+    padding: 10px;
+    margin-bottom: 30px;
+}
+
+.infoSummary p {
+    padding: 10px;
+    margin: 0;
+    font-size: 1.1em;
+}

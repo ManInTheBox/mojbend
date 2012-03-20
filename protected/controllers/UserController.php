@@ -18,6 +18,7 @@ class UserController extends Controller
         return array(
             'accessControl',
             array('application.filters.UserReadyFilter + home'),
+            array('application.filters.ArtistFilter - register, login, logout'),
         );
     }
 
@@ -59,7 +60,6 @@ class UserController extends Controller
 
     public function actionRegister()
     {
-//        $this->sidebar = '//layouts/_nosidebar';
         $user = new User();
         $person = new Person();
 
@@ -97,8 +97,8 @@ class UserController extends Controller
                     );
                     $email->send(Email::TYPE_REGISTER);
 
-                    $this->setFlashSuccess(t('You have successfully registered. Check mail.'));
-                    $this->redirect(array('home', 'uid' => $user->id));
+                    $this->setFlashSuccess(t('Registracija je uspešno obavljena. Molimo Vas proverite e-mail poštu.'));
+//                    $this->redirect(array('home', 'uid' => $user->id));
                 }
             }
         }
@@ -141,7 +141,7 @@ class UserController extends Controller
 
         $user->status = User::STATUS_ACTIVE;
         $user->save(false);
-        $this->setFlashSuccess(t('Your account is activated now. Please login to continue.'));
+        $this->setFlashSuccess(t('Vaš nalog je sada aktivan. Molimo Vas sada se prijavite.'));
         $this->redirect(array('/user/login'));
     }
 
@@ -173,12 +173,12 @@ class UserController extends Controller
                     );
                     $email->send(Email::TYPE_PASSWORD_RESET);
 
-                    $this->setFlashInfo(t('Read email.'));
+                    $this->setFlashInfo(t('Proces promene lozinke je upravo pokrenut. Molimo Vas proverite da proverite e-mail poštu.'));
                     $this->redirect(array('/user/login'));
                 }
                 catch (Exception $ex)
                 {
-                    $passwordResetForm->addError('email', t('E-mail didn\'t found in our database.'));
+                    $passwordResetForm->addError('email', t('E-mail adresa nije pronađena u našoj bazi podataka.'));
                 }
             }
         }
@@ -208,7 +208,8 @@ class UserController extends Controller
                 $user->salt = $salt;
                 $user->activation_hash = Utility::generateHash();
                 $user->save(false);
-                $this->setFlashSuccess(t('new password done...'));
+                $this->setFlashSuccess(t('Nova lozinka uspešno sačuvana.'));
+                $this->setFlashInfo(t('Sada se možete prijaviti sa novom lozinkom.'));
                 $this->redirect(array('/user/login'));
             }
         }

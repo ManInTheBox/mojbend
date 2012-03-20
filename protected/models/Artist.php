@@ -39,7 +39,7 @@ class Artist extends ActiveRecord
     public function rules()
     {
         return array(
-            array('user_id', 'required'),
+            array('user_id, list_artist_type_id', 'required'),
             array('user_id, list_artist_type_id', 'numerical', 'integerOnly'=>true),
             array('description', 'safe'),
         );
@@ -65,9 +65,8 @@ class Artist extends ActiveRecord
     public function attributeLabels()
     {
         return array(
-            'user_id' => t('User'),
-            'list_artist_type_id' => t('List Artist Type'),
-            'description' => t('Description'),
+            'list_artist_type_id' => t('Odsek'),
+            'description' => t('Opis'),
         );
     }
 }

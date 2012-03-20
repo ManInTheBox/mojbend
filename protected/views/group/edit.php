@@ -1,6 +1,4 @@
-<?php echo $this->renderFlash(); ?>
-
-<div id="form">
+<?php $this->renderFlash(); ?>
 
 <?php $form=$this->beginWidget('ActiveForm', array(
 	'id'=>'group-form',
@@ -43,8 +41,6 @@
     </tr>
 </table>
 <?php $this->endWidget(); ?>
-
-</div>
 
 <script type="text/javascript">
     $('#Group_founded_date').datepicker({

@@ -13,7 +13,7 @@ return array(
     ),
     'components' => array(
         'db' => array(
-            'connectionString' => 'mysql:host=localhost;dbname=mojbend_dev',
+            'connectionString' => 'mysql:host=localhost;dbname=mojbend',
             'emulatePrepare' => true,
             'username' => 'root',
             'password' => '',

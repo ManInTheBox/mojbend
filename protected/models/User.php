@@ -15,6 +15,13 @@
  * @property integer $logged_in
  * @property string $activation_hash
  * @property string $username
+ * 
+ * @property Artist $artist
+ * @property Artist[] $artists
+ * @property Group[] $groups
+ * @property InternalErrorLog[] $internalErrorLogs
+ * @property Person $person
+ * @property UserLog[] $userLogs
  */
 class User extends ActiveRecord
 {
@@ -71,7 +78,12 @@ class User extends ActiveRecord
     public function relations()
     {
         return array(
+            'artist' => array(self::HAS_ONE, 'Artist', 'user_id'),
+            'artists' => array(self::MANY_MANY, 'Artist', 'fan_artist(fan_id, artist_id)'),
+            'groups' => array(self::MANY_MANY, 'Group', 'fan_group(fan_id, group_id)'),
+            'internalErrorLogs' => array(self::HAS_MANY, 'InternalErrorLog', 'user_id'),
             'person' => array(self::HAS_ONE, 'Person', 'user_id'),
+            'userLogs' => array(self::HAS_MANY, 'UserLog', 'user_id'),
         );
     }
 
@@ -81,11 +93,11 @@ class User extends ActiveRecord
     public function attributeLabels()
     {
         return array(
-            'email' => t('Email'),
-            'password' => t('Password'),
-            'language' => t('Language'),
+            'email' => t('E-mail'),
+            'password' => t('Lozinka'),
+            'language' => t('Jezik'),
             'is_artist' => t('Da li ste muzicar?'),
-//            'is_artist' => t('Are you artist?'),
+            'username' => t('Korisničko ime'),
         );
     }
     

@@ -71,6 +71,11 @@ class UserIdentity extends CUserIdentity
         }
         else
         {
+            if ($user->artist && !$user->artist->list_artist_type_id)
+            {
+                $this->setState('artistPending', true);
+            }
+            
             $this->errorCode = self::ERROR_NONE;
             $this->_id = $user->id;
             $this->_username = $user->email;
