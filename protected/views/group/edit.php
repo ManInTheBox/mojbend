@@ -14,7 +14,7 @@
     </tr>
     <tr>
         <td><?php echo $form->labelEx($group,'founded_date'); ?></td>
-        <td><?php echo $form->textField($group,'founded_date', array('style' => 'width: 420px;')); ?></td>
+        <td><?php echo $form->textField($group,'founded_date', array('style' => 'width: 420px;', 'readonly' => 'readonly')); ?></td>
     </tr>
     <tr>
         <td><?php echo $form->labelEx($group,'official_website'); ?></td>

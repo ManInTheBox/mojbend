@@ -20,7 +20,7 @@ $form = $this->beginWidget('ActiveForm', array(
     </tr>
     <tr>
         <td><?php echo $form->labelEx($person, 'birth_date'); ?></td>
-        <td><?php echo $form->textField($person, 'birth_date', array('size' => 65)); ?></td>
+        <td><?php echo $form->textField($person, 'birth_date', array('size' => 65, 'readonly' => 'readonly')); ?></td>
     </tr>
     <tr>
         <td><?php echo $form->labelEx($person, 'gender'); ?></td>
@@ -44,3 +44,11 @@ $form = $this->beginWidget('ActiveForm', array(
 </table>
 
 <?php $this->endWidget(); ?>
+
+<script type="text/javascript">
+    $('#Person_birth_date').datepicker({
+        dateFormat: 'dd.mm.yy',
+        changeYear: true,
+        yearRange: '1920:<?php echo date('Y'); ?>'
+    });
+</script>

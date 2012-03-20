@@ -48,13 +48,15 @@ class ArtistController extends Controller
     
     public function actionEdit()
     {
-        $artist = $this->loadModel('Artist', u()->id);
+        $user = $this->loadModel('User', u()->id);
         
         if (isset ($_POST['Artist']))
         {
-            $artist->attributes = $_POST['Artist'];
+            $user->attributes = $_POST['User'];
+            $user->person->attributes = $_POST['Person'];
+            $user->artist->attributes = $_POST['Artist'];
             
-            if ($artist->save())
+            if ($user->save() && $user->person->save() && $user->artist->save())
             {
                 $this->setFlashSuccess();
                 $this->setFlashInfo('yeaaaaaaaaaaaaah');
@@ -62,7 +64,11 @@ class ArtistController extends Controller
             }
         }
        
-        $this->render('//artist/edit', array('artist' => $artist));
+        $this->render('//artist/edit', array(
+            'user' => $user,
+            'person' => $user->person,
+            'artist' => $user->artist,
+        ));
     }
     
     public function actionView($uid)

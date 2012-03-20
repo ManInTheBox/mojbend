@@ -18,7 +18,7 @@ class UserController extends Controller
         return array(
             'accessControl',
             array('application.filters.UserReadyFilter + home'),
-            array('application.filters.ArtistFilter - register, login, logout'),
+            array('application.filters.ArtistFilter'),
         );
     }
 
@@ -98,7 +98,7 @@ class UserController extends Controller
                     $email->send(Email::TYPE_REGISTER);
 
                     $this->setFlashSuccess(t('Registracija je uspešno obavljena. Molimo Vas proverite e-mail poštu.'));
-//                    $this->redirect(array('home', 'uid' => $user->id));
+                    $this->redirect(a()->homeUrl);
                 }
             }
         }

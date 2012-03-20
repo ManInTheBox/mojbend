@@ -11,7 +11,7 @@ class ArtistFilter extends CFilter
     {
         if (isset (u()->artistPending))
         {
-            c()->redirect(array('/artist/edit'));
+//            c()->redirect(array('/artist/edit', 'uid' => u()->id));
         }
         return true;
     }

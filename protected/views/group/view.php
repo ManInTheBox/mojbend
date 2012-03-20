@@ -1,3 +1,5 @@
+<?php $this->renderFlash(); ?>
+
 <table>
     <tr>
         <td>

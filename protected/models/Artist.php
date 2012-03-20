@@ -39,7 +39,7 @@ class Artist extends ActiveRecord
     public function rules()
     {
         return array(
-            array('user_id, list_artist_type_id', 'required'),
+            array('user_id', 'required'),
             array('user_id, list_artist_type_id', 'numerical', 'integerOnly'=>true),
             array('description', 'safe'),
         );

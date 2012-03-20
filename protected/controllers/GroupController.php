@@ -130,6 +130,7 @@ class GroupController extends Controller
                 {
                     $group->localizeDate();
                 }
+                $this->redirect(array('/group/view', 'gid' => $gid));
             }
             else
             {
