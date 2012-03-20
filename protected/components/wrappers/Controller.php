@@ -36,7 +36,7 @@ class Controller extends CController
     {
         if ($value === NULL)
         {
-            $value = Message::getFlashSuccessMessage();
+            $value = t('Promene uspešno sačuvane.');
         }
         $this->setFlash('success', $value, $defaultValue);
     }
@@ -45,7 +45,7 @@ class Controller extends CController
     {
         if ($value === NULL)
         {
-            $value = Message::getFlashErrorMessage();
+            $value = t('Dogodila se greška.');
         }
         $this->setFlash('error', $value, $defaultValue);
     }
@@ -99,7 +99,7 @@ class Controller extends CController
     {
         if ($this->hasFlashSuccess())
         {
-            echo $this->getFlashSuccess();
+            $this->renderPartial('//flash/_success', array('message' => $this->getFlashSuccess()));
         }
         else if ($this->hasFlashError())
         {

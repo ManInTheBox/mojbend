@@ -44,16 +44,22 @@ class GroupController extends Controller
     public function actionList()
     {
         $groups = new CActiveDataProvider('Group', array(
-            'pagination' => array(
-                'pageSize' => 5,
-            ),
-        ));
+                    'pagination' => array(
+                        'pageSize' => 5,
+                    ),
+                ));
         $this->render('list', array('groups' => $groups));
     }
 
     public function actionView($gid)
     {
         $group = $this->loadModel('Group', $gid);
+        $group->scenario = 'preview';
+
+        if ($group->founded_date !== $group->emptyMessage)
+        {
+            $group->localizeDate();
+        }
         $this->render('view', array('group' => $group));
     }
 
@@ -63,24 +69,37 @@ class GroupController extends Controller
 
         if (isset($_POST['Group']))
         {
+            $valid = false;
             $group->attributes = $_POST['Group'];
             $group->picture = CUploadedFile::getInstance($group, 'picture');
 
-            if ($group->save())
+            if ($group->validate())
             {
-                $picture = new Picture();
-                $picture->store($group->picture->getExtensionName());
-                $group->picture->saveAs($picture->path);
-                $picture->save();
+                if (!$group->picture)
+                {
+                    $group->profile_picture_id = Picture::DEFAULT_ID;
+                }
+                else
+                {
+                    $picture = new Picture();
+                    $picture->size = $group->picture->size;
+                    $picture->type = $group->picture->type;
+                    $picture->extension = $group->picture->extensionName;
+                    $picture->prepare()->save();
 
-                $group->profile_picture_id = $picture->id;
+                    $group->picture->saveAs($picture->realPath);
+
+                    $picture->generateThumbs();
+
+                    $group->profile_picture_id = $picture->id;
+                }
                 $group->save();
 
-//                $artistGroup = new ArtistGroup();
-//                $artistGroup->artist_id = u()->id;
-//                $artistGroup->group_id = $group->id;
-//                $artistGroup->role = ArtistGroup::ROLE_ADMIN;
-//                $artistGroup->save(false);
+////                $artistGroup = new ArtistGroup();
+////                $artistGroup->artist_id = u()->id;
+////                $artistGroup->group_id = $group->id;
+////                $artistGroup->role = ArtistGroup::ROLE_ADMIN;
+////                $artistGroup->save(false);
 
                 $this->setFlashSuccess(t('Group succesfully created.'));
                 $this->redirect(array('/group/list'));
@@ -93,13 +112,31 @@ class GroupController extends Controller
     public function actionEdit($gid)
     {
         $group = $this->loadModel('Group', $gid);
+        $group->localizeDate();
 
-        if (isset ($_POST['Group']))
+        if (isset($_POST['Group']))
         {
             $group->attributes = $_POST['Group'];
+
+            if (!empty ($group->founded_date))
+            {
+                $group->localizeDate('-', '.');
+            }
+
             if ($group->save())
             {
-                $this->setFlashSuccess('uspesno editovana...');
+                $this->setFlashSuccess();
+                if (!empty ($group->founded_date))
+                {
+                    $group->localizeDate();
+                }
+            }
+            else
+            {
+                if (!empty ($group->founded_date))
+                {
+                   $group->localizeDate();
+                }
             }
         }
         $this->render('edit', array('group' => $group));
@@ -166,7 +203,7 @@ class GroupController extends Controller
             $request->group_id = $_POST['gid'];
 
             if ($request->save())
-                    echo 'ok';
+                echo 'ok';
             else
                 echo 'not ok';
         }

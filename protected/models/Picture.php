@@ -5,11 +5,19 @@
  *
  * The followings are the available columns in table 'picture':
  * @property integer $id
+ * @property string $name
  * @property string $path
  * @property string $created_at
+ * @property integer $size
+ * @property string $type
+ * @property string $extension
  */
 class Picture extends ActiveRecord
 {
+    const DEFAULT_ID = 1;
+
+    public $storePath;
+
     /**
      * Returns the static model of the specified AR class.
      * @return Picture the static model class
@@ -33,7 +41,7 @@ class Picture extends ActiveRecord
     public function rules()
     {
         return array(
-            array('path', 'required'),
+            array('name', 'required'),
             array('path', 'length', 'max'=>3200),
             array('created_at', 'length', 'max'=>10),
         );
@@ -66,20 +74,49 @@ class Picture extends ActiveRecord
         return parent::beforeSave();
     }
 
-    public function store($extension)
+    public function prepare()
     {
         $this->path = Utility::generateHash();
-        $path = path('webroot.images');
+        
         $levelOne = substr($this->path, 0, 2);
         $levelTwo = substr($this->path, 2, 2);
         $levelThree = substr($this->path, 4, 2);
 
-        $fileName = substr($this->path, 6);
+        $this->name = substr($this->path, 6);
+        $this->path = "$levelOne/$levelTwo/$levelThree/{$this->name}.{$this->extension}";
 
-        $realPath = "$path/$levelOne/$levelTwo/$levelThree";
-        
-        mkdir($realPath, 0777, true);
-        $this->path = $realPath . '/' . $fileName . '.' . $extension;
+        $this->storePath = path('webroot.images') . "/$levelOne/$levelTwo/$levelThree";
+        mkdir($this->storePath, 0777, true);
 
+        return $this;
     }
+
+    public static function getDefault()
+    {
+        return self::model()->findByPk(self::DEFAULT_ID);
+    }
+
+    public function getRealPath()
+    {
+        return path('webroot.images') . '/' . $this->path;
+    }
+
+    public function generateThumbs()
+    {
+        $imageProcessor = new ImageProcessor($this->realPath);
+        $imageProcessor->resize(351, 216);
+        $imageProcessor->save($this->storePath . '/' . $this->name . '_front.' . $this->extension);
+        $imageProcessor->resize(351, 216);
+        $imageProcessor->save($this->storePath . '/' . $this->name . '_small.' . $this->extension);
+        $imageProcessor->resize(351, 216);
+        $imageProcessor->save($this->storePath . '/' . $this->name . '_large.' . $this->extension);
+        $imageProcessor->resize(351, 216);
+        $imageProcessor->save($this->realPath); // profile
+    }
+
+    public function getShortPath()
+    {
+        return bu() . '/images/' . $this->path;
+    }
+
 }

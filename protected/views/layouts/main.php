@@ -4,10 +4,23 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title><?php echo $this->pageTitle; ?></title>
         <link rel="stylesheet" href="<?php echo bu(); ?>/css/styles.css" type="text/css" />
+        <link rel="stylesheet" href="<?php echo bu(); ?>/css/jquery-ui.css" type="text/css" />
+        <link rel="stylesheet" href="<?php echo bu(); ?>/js/fancybox/jquery.fancybox.css" type="text/css" />
         <script type="text/javascript" src="<?php echo bu(); ?>/js/jquery.js"></script>
+        <script type="text/javascript" src="<?php echo bu(); ?>/js/jquery.mousewheel.js"></script>
+        <script type="text/javascript" src="<?php echo bu(); ?>/js/jquery-ui.js"></script>
         <script type="text/javascript" src="<?php echo bu(); ?>/js/slider.js"></script>
         <script type="text/javascript" src="<?php echo bu(); ?>/js/superfish.js"></script>
         <script type="text/javascript" src="<?php echo bu(); ?>/js/custom.js"></script>
+        <script type="text/javascript" src="<?php echo bu(); ?>/js/fancybox/jquery.fancybox.pack.js"></script>
+
+
+        <link rel="stylesheet" href="<?php echo bu(); ?>/js/fancybox/helpers/jquery.fancybox-buttons.css?v=2.0.5" type="text/css" media="screen" />
+        <script type="text/javascript" src="<?php echo bu(); ?>/js/fancybox/helpers/jquery.fancybox-buttons.js?v=2.0.5"></script>
+
+        <link rel="stylesheet" href="<?php echo bu(); ?>/js/fancybox/helpers/jquery.fancybox-thumbs.css?v=2.0.5" type="text/css" media="screen" />
+        <script type="text/javascript" src="<?php echo bu(); ?>/js/fancybox/helpers/jquery.fancybox-thumbs.js?v=2.0.5"></script>
+
     </head>
     <body class="homepage">
         <div id="container">
