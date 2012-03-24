@@ -58,22 +58,38 @@ class LoginForm extends CFormModel
                 switch ($this->_identity->errorCode)
                 {
                     case UserIdentity::ERROR_STATUS_INACTIVE:
-                        $this->addError('password', t('Vaš nalog još uvek nije aktivan.'));
+                        $this->addErrors(array(
+                            'password' => t('Vaš nalog još uvek nije aktivan.'),
+                            'email' => '', // don't display the same error message
+                        ));
                         break;
                     case UserIdentity::ERROR_STATUS_PENDING:
                         $user = User::model()->findByAttributes(array('email' => $this->email));
-                        $this->addError('password', t('Vaš nalog još uvek nije aktiviran. Molimo Vas pratite link koji smo Vam poslali u e-mail poruci.<br />{link}', array(
-                            '{link}' => l('ACTIVATE', url('/user/activate', array('uid' => $user->id, 'token' => $user->activation_hash))),
-                        )));
+                        $this->addErrors(array(
+                            'password' => t(
+                                            'Vaš nalog još uvek nije aktiviran. Molimo vas pratite link koji je poslat u e-mail poruci.<br />{link}', 
+                                            array('{link}' => l('AKTIVIRAJ ODMAH', url('/user/activate', array('uid' => $user->id, 'token' => $user->activation_hash))),)),
+                            'email' => '', // don't display the same error message
+                            ));
                         break;
                     case UserIdentity::ERROR_STATUS_SUSPENDED:
-                        $this->addError('password', t('Vaš nalog je suspendovan.'));
+                        $this->addErrors(array(
+                            'password' => t('Vaš nalog je suspendovan.'),
+                            'email' => '', // don't display the same error message
+                        ));
+                            
                         break;
                     case UserIdentity::ERROR_STATUS_DEACTIVATED:
-                        $this->addError('password', t('Vaš nalog je deaktiviran.'));
+                        $this->addError(array(
+                            'password' => t('Vaš nalog je deaktiviran.'),
+                            'email' => '', // don't display the same error message
+                        ));
                         break;
                     default:
-                        $this->addError('password', t('Netačna e-mail adresa ili lozinka.'));
+                        $this->addErrors(array(
+                            'password' => t('Netačna e-mail adresa ili lozinka.'),
+                            'email' => '', // don't display the same error message
+                        ));
                         break;
                 }
             }

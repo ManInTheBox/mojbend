@@ -34,7 +34,7 @@ class User extends ActiveRecord
     const LOGGED_IN = 1;
     const LOGGED_OUT = 0;
 
-    public $is_artist = false;
+    private $_isArtist = false;
 
     /**
      * Returns the static model of the specified AR class.
@@ -65,10 +65,10 @@ class User extends ActiveRecord
             array('email', 'email',),
             array('email', 'unique'),
 //            array('email', 'email', 'checkMX' => true),
-            array('password', 'length', 'max' => 128),
+            array('password', 'length', 'max' => 32),
             array('salt, cookie_token', 'length', 'max' => 32),
             array('created_at, language', 'length', 'max' => 10),
-            array('is_artist', 'boolean'),
+            array('isArtist', 'boolean'),
         );
     }
 
@@ -96,7 +96,7 @@ class User extends ActiveRecord
             'email' => t('E-mail'),
             'password' => t('Lozinka'),
             'language' => t('Jezik'),
-            'is_artist' => t('Da li ste muzicar?'),
+            'isArtist' => t('Da li ste muzičar?'),
             'username' => t('Korisničko ime'),
         );
     }
@@ -134,5 +134,14 @@ class User extends ActiveRecord
 
         return $homeUrl;
     }
-
+    
+    public function getIsArtist()
+    {
+        return $this->_isArtist || isset ($this->artist);
+    }
+    
+    public function setIsArtist($value)
+    {
+        $this->_isArtist = $value;
+    }
 }

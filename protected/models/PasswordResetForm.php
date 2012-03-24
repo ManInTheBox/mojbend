@@ -20,9 +20,9 @@ class PasswordResetForm extends CFormModel
         return array(
             array('email', 'required'),
             array('captchaCode',
-               'application.extensions.recaptcha.EReCaptchaValidator',
+               'ext.recaptcha.EReCaptchaValidator',
                'privateKey'=>'6LdTbsMSAAAAAAVxt4iS3tv4G2vuOu85Fr8quz_0'),
-//            array('email', 'email', 'checkMX' => true),
+            array('email', 'email', 'checkMX' => true),
         );
     }
 

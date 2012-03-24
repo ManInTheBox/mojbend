@@ -11,7 +11,8 @@ class ArtistFilter extends CFilter
     {
         if (isset (u()->artistPending))
         {
-//            c()->redirect(array('/artist/edit', 'uid' => u()->id));
+            c()->setFlashInfo(t('Molimo vas upotpunite vaš umetnički profil.'));
+            c()->redirect(array('/artist/edit'));
         }
         return true;
     }

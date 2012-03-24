@@ -78,19 +78,19 @@ class SiteController extends Controller
             switch ($error['code'])
             {
                 case 400:
-                    $error['message'] = t('Your request is invalid. Please do not repeat that again.');
+                    $error['message'] = t('Vaš zahtev nije ispravan. Molimo Vas da to više ne ponavljate.');
                     break;
                 case 404:
-                    $error['message'] = t('The requested page wasn\'t found.');
+                    $error['message'] = t('Tražena stranica nije pronađena.');
                     break;
                 case 403:
-                    $error['message'] = t('You don\'t have permissions to access this page.');
+                    $error['message'] = t('Nemate privilegije za pristup ovoj stranici.');
                     break;
                 case 500:
-                    $error['message'] = t('Something went wrong and our engineers are working on it.');
+                    $error['message'] = t('Nešto nije u redu i naši programeri rade na tome.');
                     break;
                 default:
-                    $error['message'] = t('Something went wrong and our engineers are working on it.');
+                    $error['message'] = t('Nešto nije u redu i naši programeri rade na tome.');
                     break;
             }
 

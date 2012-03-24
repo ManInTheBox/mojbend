@@ -48,26 +48,44 @@ class ArtistController extends Controller
     
     public function actionEdit()
     {
-        $user = $this->loadModel('User', u()->id);
+        $artist = $this->loadModel('Artist', array(
+            'condition' => 'user_id = :id',
+            'with' => 'user',
+            'params' => array(
+                ':id' => u()->id
+            ),
+        ));
+        $artist->scenario = 'edit';
+        $newPasswordForm = new NewPasswordForm();
         
         if (isset ($_POST['Artist']))
         {
-            $user->attributes = $_POST['User'];
-            $user->person->attributes = $_POST['Person'];
-            $user->artist->attributes = $_POST['Artist'];
-            
-            if ($user->save() && $user->person->save() && $user->artist->save())
+            $artist->user->isArtist = $_POST['User']['isArtist'];
+            $artist->user->person->attributes = $_POST['Person'];
+            $artist->attributes = $_POST['Artist'];
+            $newPasswordForm->attributes = $_POST['NewPasswordForm'];
+                
+            if ($artist->user->validate() & $artist->user->person->validate() & $artist->validate() & $newPasswordForm->validate())
             {
+                $artist->user->person->save();
+                
+                if (!$_POST['User']['isArtist'])
+                {
+                    $artist->delete();
+                    u()->setState('artistPending', true, true);
+                    $this->setFlashSuccess();
+                    $this->redirect(array('/user/edit'));
+                }
+                
                 $this->setFlashSuccess();
-                $this->setFlashInfo('yeaaaaaaaaaaaaah');
-//                $this->redirect(array('/artist/list'));
             }
         }
        
         $this->render('//artist/edit', array(
-            'user' => $user,
-            'person' => $user->person,
-            'artist' => $user->artist,
+            'user' => $artist->user,
+            'person' => $artist->user->person,
+            'artist' => $artist,
+            'newPasswordForm' => $newPasswordForm,
         ));
     }
     

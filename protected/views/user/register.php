@@ -35,8 +35,8 @@ $form = $this->beginWidget('ActiveForm', array(
         <td><?php echo $form->passwordField($user, 'password', array('size' => 65, 'maxlength' => 128)); ?></td>
     </tr>
     <tr>
-        <td><?php echo $form->labelEx($user, 'is_artist'); ?></td>
-        <td><?php echo $form->checkBox($user, 'is_artist'); ?></td>
+        <td><?php echo $form->labelEx($user, 'isArtist'); ?></td>
+        <td><?php echo $form->checkBox($user, 'isArtist'); ?></td>
     </tr>
     <tr>
         <td class="button"><?php echo CHtml::submitButton(t('Registruj se')); ?></td>

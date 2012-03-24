@@ -64,18 +64,18 @@ class Person extends ActiveRecord
     public function attributeLabels()
     {
         return array(
-            'first_name' => t('First Name'),
-            'last_name' => t('Last Name'),
-            'gender' => t('Gender'),
-            'birth_date' => t('Date of birth'),
+            'first_name' => t('Ime'),
+            'last_name' => t('Prezime'),
+            'gender' => t('Pol'),
+            'birth_date' => t('Datum rođenja'),
         );
     }
 
     public function getGenderOptions()
     {
         return array(
-            self::GENDER_MALE => t('Male'),
-            self::GENDER_FEMALE => t('Female'),
+            self::GENDER_MALE => t('Muško'),
+            self::GENDER_FEMALE => t('Žensko'),
         );
     }
 

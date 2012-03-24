@@ -3,7 +3,7 @@
 Yii::setPathOfAlias('wrappers', dirname(__FILE__) . '/components/wrappers');
 
 return array(
-    'sourceLanguage' => 'en',
+    'sourceLanguage' => 'sr_yu',
     'basePath' => dirname(__FILE__) . '/..',
     'onBeginRequest' => array('Bootstrap', 'beginRequest'),
     'runtimePath' => dirname(__FILE__) . '/../../runtime',

@@ -5,9 +5,17 @@
 	'enableAjaxValidation'=>false,
 )); ?>
 
-<?php echo $form->errorSummary(array($user, $person, $artist)); ?>
+<?php echo $form->errorSummary(array($user, $person, $artist, $newPasswordForm)); ?>
 
 <table>
+    <tr>
+        <td><?php echo $form->labelEx($artist, 'list_artist_type_id'); ?></td>
+        <td><?php echo $form->dropDownList($artist, 'list_artist_type_id', array(), array('style' => 'width: 432px;')); ?></td>
+    </tr>
+    <tr>
+        <td><?php echo $form->labelEx($artist, 'description'); ?></td>
+        <td><?php echo $form->textArea($artist, 'description', array('style' => 'width: 420px; height: 100px;')); ?></td>
+    </tr>
     <tr>
         <td><?php echo $form->labelEx($person, 'first_name'); ?></td>
         <td><?php echo $form->textField($person, 'first_name', array('style' => 'width: 420px;')); ?></td>
@@ -26,19 +34,23 @@
     </tr>
     <tr>
         <td><?php echo $form->labelEx($user, 'email'); ?></td>
-        <td><?php echo $form->textField($user, 'email', array('style' => 'width: 420px;')); ?></td>
+        <td><?php echo $form->textField($user, 'email', array('style' => 'width: 420px;', 'disabled' => 'disabled')); ?></td>
     </tr>
     <tr>
-        <td><?php echo $form->labelEx($user, 'password'); ?></td>
-        <td><?php echo $form->passwordField($user, 'password', array('style' => 'width: 420px;')); ?></td>
+        <td><?php echo $form->labelEx($newPasswordForm, 'oldPassword'); ?></td>
+        <td><?php echo $form->passwordField($newPasswordForm, 'oldPassword', array('style' => 'width: 420px;')); ?></td>
     </tr>
     <tr>
-        <td><?php echo $form->labelEx($artist, 'list_artist_type_id'); ?></td>
-        <td><?php echo $form->dropDownList($artist, 'list_artist_type_id', array(), array('style' => 'width: 432px;')); ?></td>
+        <td><?php echo $form->labelEx($newPasswordForm, 'newPassword'); ?></td>
+        <td><?php echo $form->passwordField($newPasswordForm, 'newPassword', array('style' => 'width: 420px;')); ?></td>
     </tr>
     <tr>
-        <td><?php echo $form->labelEx($artist, 'description'); ?></td>
-        <td><?php echo $form->textArea($artist, 'description', array('style' => 'width: 420px; height: 100px;')); ?></td>
+        <td><?php echo $form->labelEx($newPasswordForm, 'newPasswordRepeat'); ?></td>
+        <td><?php echo $form->passwordField($newPasswordForm, 'newPasswordRepeat', array('style' => 'width: 420px;')); ?></td>
+    </tr>
+    <tr>
+        <td><?php echo $form->labelEx($user, 'isArtist'); ?></td>
+        <td><?php echo $form->checkBox($user, 'isArtist'); ?></td>
     </tr>
     <tr>
         <td class="button"><?php echo Html::submitButton(t('Sačuvaj izmene')); ?></td>

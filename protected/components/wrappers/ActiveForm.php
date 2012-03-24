@@ -16,7 +16,7 @@ class ActiveForm extends CActiveForm
         }
         if (!isset ($htmlOptions['prompt']))
         {
-            $htmlOptions['prompt'] = t('Please choose...');
+            $htmlOptions['prompt'] = t('Molimo izaberite...');
         }
         
         return parent::dropDownList($model, $attribute, $data, $htmlOptions);

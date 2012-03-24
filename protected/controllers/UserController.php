@@ -18,10 +18,9 @@ class UserController extends Controller
         return array(
             'accessControl',
             array('application.filters.UserReadyFilter + home'),
-            array('application.filters.ArtistFilter'),
+            array('application.filters.ArtistFilter - logout'),
         );
     }
-
     /**
      * Specifies the access control rules.
      * This method is used by the 'accessControl' filter.
@@ -32,13 +31,21 @@ class UserController extends Controller
         return array(
             array('allow',
                 'actions' => array(
-                    'home', 'register', 'login', 'activate', 'passwordReset',
-                    'lostPassword',
+                    'home',
                 ),
                 'users' => array('*'),
             ),
             array('allow',
-                'actions' => array(),
+                'actions' => array(
+                    'register', 'login', 'activate', 'passwordReset',
+                    'lostPassword',
+                ),
+                'users' => array('?'),
+            ),
+            array('allow',
+                'actions' => array(
+                    'logout', 'edit',
+                ),
                 'users' => array('@'),
             ),
             array('deny',
@@ -68,15 +75,16 @@ class UserController extends Controller
             $saved = false;
 
             $user->attributes = $_POST['User'];
+            $person->attributes = $_POST['Person'];
+            
             if ($user->save())
             {
                 $saved = true;
 
-                $person->attributes = $_POST['Person'];
                 $person->user_id = $user->id;
                 $saved = $person->save();
 
-                if ($user->is_artist)
+                if ($user->isArtist)
                 {
                     $artist = new Artist();
                     $artist->user_id = $user->id;
@@ -116,14 +124,13 @@ class UserController extends Controller
 
             if ($loginForm->validate() && $loginForm->login())
             {
-                // TODO: da li je neophodan returnUrl?
-                if (isset(u()->returnUrl))
+                if (u()->returnUrl == r()->scriptUrl)
                 {
-                    $this->redirect(u()->returnUrl);
+                    $this->redirect(u()->homeUrl);
                 }
                 else
                 {
-                    $this->redirect(u()->homeurl);
+                    $this->redirect(u()->returnUrl);
                 }
             }
         }
@@ -231,18 +238,48 @@ class UserController extends Controller
     public function actionEdit()
     {
         $user = $this->loadModel('User', u()->id);
+        
+        if ($user->isArtist)
+        {
+            $this->redirect(array('/artist/edit'));
+        }
+        
+        $newPasswordForm = new NewPasswordForm();
 
         if (isset ($_POST['User']))
         {
-            $user->attributes = $_POST['User'];
+            $user->isArtist = $_POST['User']['isArtist'];
             $user->person->attributes = $_POST['Person'];
+            $newPasswordForm->attributes = $_POST['NewPasswordForm'];
 
-            if ($user->save() && $user->person->save())
+            if ($user->validate() & $user->person->validate() & $newPasswordForm->validate())
             {
-                $this->setFlashSuccess('uspesno editovan user');
+                if ($newPasswordForm->shouldChange)
+                {
+                    $user->password = User::encryptPassword($newPasswordForm->newPassword, $user->salt);
+                }
+                
+                $user->person->save();
+                
+                if ($user->isArtist)
+                {
+                    $artist = new Artist();
+                    $artist->user_id = $user->id;
+                    $artist->save();
+                    u()->setState('artistPending', true);
+                    
+                    $this->setFlashSuccess();
+                    $this->refresh();
+                }
+                
+                $this->setFlashSuccess();
             }
         }
-        $this->render('edit', array('user' => $user, 'person' => $user->person));
+        $this->render('edit', array(
+            'user' => $user,
+            'person' => $user->person,
+            'newPasswordForm' => $newPasswordForm
+        ));
     }
 
 }

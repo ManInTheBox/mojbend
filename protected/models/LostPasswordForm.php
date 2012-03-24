@@ -27,8 +27,8 @@ class LostPasswordForm extends CFormModel
     public function attributeLabels()
     {
         return array(
-            'new_password' => t('New Password'),
-            'new_password_repeat' => t('Repeat Password'),
+            'new_password' => t('Nova lozinka'),
+            'new_password_repeat' => t('Ponovite lozinku'),
         );
     }
 }
