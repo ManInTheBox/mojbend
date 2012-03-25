@@ -1,13 +1,20 @@
 <?php $this->renderFlash(); ?>
 
-<?php $form=$this->beginWidget('ActiveForm', array(
-	'id'=>'group-form',
-	'enableAjaxValidation'=>false,
+<?php $form = $this->beginWidget('ActiveForm', array(
+    'id' => 'group-form',
+    'enableAjaxValidation' => false,
+    'htmlOptions' => array(
+        'enctype' => 'multipart/form-data',
+    ),
 )); ?>
 
 <?php echo $form->errorSummary(array($user, $person, $artist, $newPasswordForm)); ?>
 
 <table>
+    <tr>
+        <td><?php echo $form->labelEx($artist, 'picture'); ?></td>
+        <td><?php echo $form->fileField($artist, 'picture', array('style' => 'width: 420px;')); ?></td>
+    </tr>
     <tr>
         <td><?php echo $form->labelEx($artist, 'list_artist_type_id'); ?></td>
         <td><?php echo $form->dropDownList($artist, 'list_artist_type_id', array(), array('style' => 'width: 432px;')); ?></td>

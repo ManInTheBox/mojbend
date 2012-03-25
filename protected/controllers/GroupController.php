@@ -21,19 +21,24 @@ class GroupController extends Controller
     {
         return array(
             array('allow',
-                'actions' => array('list', 'view'),
+                'actions' => array(
+                    'list', 'view', 'moreDescription'
+                ),
                 'users' => array('*'),
             ),
             array('allow',
                 'actions' => array(
                     'new', 'newFan', 'inviteMembers', 'join', 'edit',
+                    'addPicture',
                 ),
                 'users' => array('@'),
             ),
             array('allow',
-                'actions' => array('delete'),
+                'actions' => array(
+                    'delete', 'removePicture', 'fan', 'profilePicture'
+                ),
                 'users' => array('@'),
-//                'verbs' => array('POST'),
+                'verbs' => array('POST'),
             ),
             array('deny',
                 'users' => array('*'),
@@ -54,12 +59,50 @@ class GroupController extends Controller
     public function actionView($gid)
     {
         $group = $this->loadModel('Group', $gid);
+        
+        if (strlen($group->description) > 150)
+        {
+            $group->description = substr($group->description, 0, 150);
+            $group->description .= '... ' . l(t('još'), array(), array('id' => 'readMore'));
+        }
+        
         $group->displayDate();
-        $this->render('view', array('group' => $group));
+        
+        $pictures = Picture::model()->findAll(array(
+            'condition' => 'related_id = :id AND related = :related',
+            'params' => array(
+                ':id' => $group->id,
+                ':related' => 'group',
+            ),
+        ));
+        
+        $criteria = new CDbCriteria();
+        $criteria->condition = 'fan_id = :id AND group_id = :gid';
+        $criteria->params = array(':id' => u()->id, ':gid' => $gid);
+        $fanButton = FanGroup::model()->exists($criteria) ? t('Vi ste fan') : t('Postani fan');
+        
+        $criteria = new CDbCriteria();
+        $criteria->condition = 'artist_id = :id AND group_id = :gid';
+        $criteria->params = array(':id' => u()->id, ':gid' => $gid);
+        $joinButton = ArtistGroup::model()->exists($criteria) ? t('Napusti bend') : t('Priključi se');
+        
+        $this->render('view', array(
+            'group' => $group, 
+            'pictures' => $pictures,
+            'isOwner' => Group::belongsToGroup($group->id),
+            'fanButton' => $fanButton,
+            'joinButton' => $joinButton,
+        ));
     }
 
     public function actionNew()
     {
+        if (!Artist::belongsToArtist(u()->id))
+        {
+            $this->setFlashInfo(t('Da biste osnovali bend morate se afirmisati kao muzičar.'));
+            $this->redirect(array('/user/edit'));
+        }
+        
         $group = new Group();
 
         if (isset($_POST['Group']))
@@ -77,24 +120,27 @@ class GroupController extends Controller
                 else
                 {
                     $picture = new Picture();
+                    $picture->instance = $group->picture;
+                    $picture->related_id = $group->id;
+                    $picture->related = 'group';
                     $picture->size = $group->picture->size;
                     $picture->type = $group->picture->type;
                     $picture->extension = $group->picture->extensionName;
                     $picture->prepare()->save();
-
+                    
                     $group->picture->saveAs($picture->realPath);
 
                     $picture->generateThumbs();
 
                     $group->profile_picture_id = $picture->id;
                 }
-                $group->save();
+                $group->save(false);
 
-////                $artistGroup = new ArtistGroup();
-////                $artistGroup->artist_id = u()->id;
-////                $artistGroup->group_id = $group->id;
-////                $artistGroup->role = ArtistGroup::ROLE_ADMIN;
-////                $artistGroup->save(false);
+                $artistGroup = new ArtistGroup();
+                $artistGroup->artist_id = u()->id;
+                $artistGroup->group_id = $group->id;
+                $artistGroup->role = ArtistGroup::ROLE_ADMIN;
+                $artistGroup->save(false);
 
                 $this->setFlashSuccess(t('Group succesfully created.'));
                 $this->redirect(array('/group/list'));
@@ -162,15 +208,31 @@ class GroupController extends Controller
         }
     }
 
-    public function actionNewFan($gid)
+    public function actionFan()
     {
-        $fanGroup = new FanGroup();
-        $fanGroup->fan_id = u()->id;
-        $fanGroup->group_id = $gid;
+        $criteria = new CDbCriteria();
+        $criteria->condition = 'fan_id = :id AND group_id = :gid';
+        $criteria->params = array(':id' => u()->id, ':gid' => $_POST['gid']);
+        
+        $fanGroup = FanGroup::model()->find($criteria);
+        if (!$fanGroup)
+        {
+            $fanGroup = new FanGroup();
+            $fanGroup->fan_id = u()->id;
+            $fanGroup->group_id = $_POST['gid'];
 
-        $fanGroup->save();
-        $this->setFlashSuccess(t('You became fan.'));
-        $this->redirect(u()->returnUrl);
+            if ($fanGroup->save())
+            {
+                echo t('Vi ste fan');
+            }
+        }
+        else
+        {
+            $fanGroup->delete();
+            echo t('Postani fan');
+        }
+        
+        a()->end();
     }
 
     public function actionJoin()
@@ -191,6 +253,38 @@ class GroupController extends Controller
         {
             throw new CHttpException(404);
         }
+    }
+    
+    public function actionProfilePicture()
+    {
+        if (ajax())
+        {
+            $gid = $_POST['gid'];
+            $pid = $_POST['pid'];
+
+            if (Group::belongsToGroup($gid))
+            {
+                $group = $this->loadModel('Group', $gid);
+                $group->profile_picture_id = $pid;
+                $group->save();
+                echo json_encode(array(
+                    'src' => $group->profilePicture->shortPath,
+                    'href' => $group->profilePicture->getShortPath('_large'),
+                ));
+                a()->end();
+            }
+        }
+        else
+        {
+            throw new CHttpException(400);
+        }
+    }
+    
+    public function actionMoreDescription($gid)
+    {
+        $group = $this->loadModel('Group', $gid);
+        echo $group->description;
+        a()->end();
     }
 
 }

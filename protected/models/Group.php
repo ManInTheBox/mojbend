@@ -49,7 +49,7 @@ class Group extends ActiveRecord
     {
         return array(
             array('name', 'required'),
-            array('picture', 'file', 'allowEmpty' => true, 'types' => 'jpg, gif, png'),
+            array('picture', 'file', 'allowEmpty' => true, 'types' => 'jpg, gif, png', 'maxSize' => 1024 * 1024 * 2, 'tooLarge' => t('Dozvoljena veličina slike je 2MB.')),
             array('official_website, facebook_url, twitter_url, youtube_url', 'url', 'defaultScheme' => 'http'),
             array('name', 'length', 'max' => 64),
             array('created_at', 'length', 'max' => 10),
@@ -88,6 +88,7 @@ class Group extends ActiveRecord
             'facebook_url' => t('Facebook'),
             'twitter_url' => t('Twitter'),
             'youtube_url' => t('You Tube'),
+            'picture' => t('Slika'),
         );
     }
 
@@ -105,35 +106,38 @@ class Group extends ActiveRecord
     {
         return $this->artists(array('condition' => 'role = ' . ArtistGroup::ROLE_ADMIN));
     }
-
-//    public function __get($name)
-//    {
-//        $v = parent::__get($name);
-//
-//        if ($this->getScenario() == 'preview')
-//        {
-//            if (empty($v) || $v === '0000-00-00')
-//            {
-//                return $this->emptyMessage;
-//            }
-//            else
-//            {
-//                return $v;
-//            }
-//        }
-//        else
-//        {
-//            return $v;
-//        }
-//    }
-
-    public function localizeDate($separator = '.', $explode = '-')
+    
+    public static function belongsToGroup($gid, $role = 'all')
     {
-        $dateParts = explode($explode, $this->founded_date);
-        if (!empty($dateParts))
+        if ($role == 'all')
         {
-            $this->founded_date = "$dateParts[2]$separator$dateParts[1]$separator$dateParts[0]";
+            $query = '
+                        SELECT 1
+                        FROM artist_group
+                        WHERE artist_id = :uid AND group_id = :gid AND (role = :admin OR role = :moderator);
+                    ';
+            $params = array(
+                ':uid' => u()->id,
+                ':gid' => $gid,
+                ':admin' => ArtistGroup::ROLE_ADMIN,
+                ':moderator' => ArtistGroup::ROLE_MODERATOR,
+            );
         }
-    }
+        else
+        {
+            $query = '
+                        SELECT 1
+                        FROM artist_group
+                        WHERE artist_id = :uid AND group_id = :gid AND role = :role;
+                    ';
+            $params = array(
+                ':uid' => u()->id,
+                ':gid' => $gid,
+                ':role' => $role,
+            );
+        }
+
+        return sql($query)->queryScalar($params);
+    }    
 
 }

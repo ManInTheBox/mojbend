@@ -111,3 +111,8 @@ function p($v)
 {
     die('<pre>' . print_r($v, true) . '</pre>');
 }
+
+function v($v)
+{
+    die(var_dump($v));
+}

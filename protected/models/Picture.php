@@ -7,16 +7,27 @@
  * @property integer $id
  * @property string $name
  * @property string $path
- * @property string $created_at
  * @property integer $size
  * @property string $type
  * @property string $extension
+ * @property string $created_at
+ * @property string $title
+ * @property string $description
+ * @property string $location
+ * @property string $date
+ * @property integer $related_id
+ * @property string $related
+ *
+ * @property Group[] $groups
+ * @property GroupPicture[] $groupPictures
  */
 class Picture extends ActiveRecord
 {
     const DEFAULT_ID = 1;
 
     public $storePath;
+    
+    public $instance;
 
     /**
      * Returns the static model of the specified AR class.
@@ -41,9 +52,15 @@ class Picture extends ActiveRecord
     public function rules()
     {
         return array(
-            array('name', 'required'),
-            array('path', 'length', 'max'=>3200),
+            array('instance', 'file', 'types' => 'jpg, gif, png', 'maxSize' => 1024 * 1024 * 2, 'tooLarge' => t('Dozvoljena veličina slike je 2MB.')),
+            array('size, related_id', 'numerical', 'integerOnly'=>true),
+            array('name, related', 'length', 'max'=>32),
+            array('path', 'length','max'=>1000),
+            array('type, title, location', 'length', 'max'=>64),
+            array('extension', 'length', 'max'=>8),
             array('created_at', 'length', 'max'=>10),
+            array('description', 'length', 'max'=>128),
+            array('date', 'safe'),
         );
     }
 
@@ -53,6 +70,8 @@ class Picture extends ActiveRecord
     public function relations()
     {
         return array(
+            'groups' => array(self::HAS_MANY, 'Group', 'profile_picture_id'),
+            'groupPictures' => array(self::HAS_MANY, 'GroupPicture', 'picture_id'),            
         );
     }
 
@@ -62,15 +81,20 @@ class Picture extends ActiveRecord
     public function attributeLabels()
     {
         return array(
-            'id' => t('ID'),
-            'path' => t('Path'),
-            'created_at' => t('Created At'),
+            'title' => t('Naslov'),
+            'description' => t('Opis'),
+            'location' => t('Lokacija'),
+            'date' => t('Datum'),
+            'instance' => t('Slika'),
         );
     }
 
     protected function beforeSave()
     {
-        $this->created_at = time();
+        if ($this->isNewRecord)
+        {
+            $this->created_at = time();
+        }
         return parent::beforeSave();
     }
 
@@ -83,10 +107,10 @@ class Picture extends ActiveRecord
         $levelThree = substr($this->path, 4, 2);
 
         $this->name = substr($this->path, 6);
-        $this->path = "$levelOne/$levelTwo/$levelThree/{$this->name}.{$this->extension}";
+        $this->path = "$levelOne/$levelTwo/$levelThree/{$this->name}";//.{$this->extension}";
 
         $this->storePath = path('webroot.images') . "/$levelOne/$levelTwo/$levelThree";
-        mkdir($this->storePath, 0777, true);
+        @mkdir($this->storePath, 0777, true);
 
         return $this;
     }
@@ -96,27 +120,62 @@ class Picture extends ActiveRecord
         return self::model()->findByPk(self::DEFAULT_ID);
     }
 
-    public function getRealPath()
+    public function getRealPath($suffix = '')
     {
-        return path('webroot.images') . '/' . $this->path;
+        return path('webroot.images') . "/{$this->path}$suffix.{$this->extension}";
     }
 
     public function generateThumbs()
     {
         $imageProcessor = new ImageProcessor($this->realPath);
-        $imageProcessor->resize(351, 216);
+        $imageProcessor->resize(351, 262);
         $imageProcessor->save($this->storePath . '/' . $this->name . '_front.' . $this->extension);
-        $imageProcessor->resize(351, 216);
+        $imageProcessor = new ImageProcessor($this->realPath);
+        $imageProcessor->resize(140, 104);
         $imageProcessor->save($this->storePath . '/' . $this->name . '_small.' . $this->extension);
-        $imageProcessor->resize(351, 216);
+        $imageProcessor = new ImageProcessor($this->realPath);
+        $imageProcessor->resize(526, 393);
         $imageProcessor->save($this->storePath . '/' . $this->name . '_large.' . $this->extension);
-        $imageProcessor->resize(351, 216);
-        $imageProcessor->save($this->realPath); // profile
+        $imageProcessor = new ImageProcessor($this->realPath);
+        $imageProcessor->resize(351, 262); // profile size
+        $imageProcessor->save($this->realPath); // without suffix
     }
 
-    public function getShortPath()
+    public function getShortPath($suffix = '', $absolute = false)
     {
-        return bu() . '/images/' . $this->path;
+        return bu($absolute) . "/images/{$this->path}$suffix.{$this->extension}";
+    }
+    
+    public static function belongsToGroup($id)
+    {
+        return Group::belongsToGroup($id);
+    }
+    
+    public static function belongsToArtist($id)
+    {
+        return Artist::belongsToArtist($id);
+    }
+    
+    public function remove()
+    {
+        $level = explode('/', $this->path);
+        $root = path('webroot.images');
+        
+        $dir = "$root/$level[0]/$level[1]/$level[2]";
+        
+        unlink("$dir/{$this->name}.{$this->extension}");
+        unlink("$dir/{$this->name}_front.{$this->extension}");
+        unlink("$dir/{$this->name}_small.{$this->extension}");
+        unlink("$dir/{$this->name}_large.{$this->extension}");
+        
+        if (count(scandir($dir)) == 2)
+        {
+            rmdir("$root/$level[0]/$level[1]/$level[2]");
+            rmdir("$root/$level[0]/$level[1]");
+            rmdir("$root/$level[0]");
+        }
+        
+        return $this->delete();
     }
 
 }

@@ -16,6 +16,9 @@
  */
 class Artist extends ActiveRecord
 {
+    
+    public $picture;
+    
     /**
      * Returns the static model of the specified AR class.
      * @return Artist the static model class
@@ -40,6 +43,7 @@ class Artist extends ActiveRecord
     {
         return array(
             array('list_artist_type_id, description', 'required', 'on' => 'edit'),
+            array('picture', 'file', 'allowEmpty' => true, 'types' => 'jpg, gif, png', 'maxSize' => 1024 * 1024 * 2, 'tooLarge' => t('Dozvoljena veličina slike je 2MB.')),
             array('user_id, list_artist_type_id', 'numerical', 'integerOnly'=>true),
             array('description', 'safe'),
         );
@@ -67,6 +71,20 @@ class Artist extends ActiveRecord
         return array(
             'list_artist_type_id' => t('Odsek'),
             'description' => t('O meni'),
+            'picture' => t('Slika'),
         );
     }
+    
+    public static function belongsToArtist($id)
+    {
+        $query = '
+                    SELECT 1
+                    FROM artist
+                    WHERE user_id = :id;
+                ';
+        $params = array(
+            ':id' => $id,
+        );
+        return sql($query)->queryScalar($params);
+    }    
 }

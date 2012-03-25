@@ -745,6 +745,11 @@ input.error {
             background-color: #F4F4F4;*/
 }
 
+.small input {
+    padding: 5px;
+    width: 110px;
+}
+
 .errorSummary {
     display: block;
     border: 1px solid #FFBABA;
@@ -777,8 +782,10 @@ input.error {
 
 .infoSummary {
     display: block;
-    border: 1px solid #9EED8E;
-    background: YELLOW;
+    border: 1px solid #DADADA;
+    background: #F3F3F3;
+    /*    border: 1px solid #EDEDED;
+        background: #fafafa;*/
     padding: 10px;
     margin-bottom: 30px;
 }
@@ -787,4 +794,44 @@ input.error {
     padding: 10px;
     margin: 0;
     font-size: 1.1em;
+}
+
+#gallery {
+    display: block; 
+    margin-top: 30px;
+    padding: 5px 5px 5px 6px;
+}
+
+.thumb {
+    display: block; 
+    float: left; 
+    clear: none; 
+    padding: 5px 5px 2px 5px; 
+    background: #FAFAFA; 
+    margin: 2px; 
+    border: 1px solid #E1E1E1;    
+}
+
+.removePicture {
+    display: block;
+    clear: none;
+    font-size: 0.7em;
+    padding-bottom: 5px;
+    text-decoration: none;
+    color: #666;
+}
+
+.setProfilePicture {
+    display: block;
+    clear: none;
+    font-size: 0.7em;
+    padding-bottom: 5px;
+    text-decoration: none;
+    color: #666;
+}
+
+#profilePicture {
+    padding: 10px;
+    background: #FAFAFA; 
+    border: 1px solid #E1E1E1;    
 }

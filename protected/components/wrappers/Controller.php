@@ -158,5 +158,84 @@ class Controller extends CController
             a()->end();
         }
     }
+    
+    public function actionAddPicture($id, $related)
+    {
+        $id = $this->checkMediaAccess($id, $related);
+        
+        $picture = new Picture();
+        
+        $identifier = $related == 'group' ? 'gid' : 'uid';
+        $backUrl = array("/$related/view", $identifier => $id);
+        
+        if (isset($_POST['Picture']))
+        {
+            $picture->attributes = $_POST['Picture'];
+            $picture->related_id = $id;
+            $picture->related = $related;
+            $picture->instance = CUploadedFile::getInstance($picture, 'instance');
+            
+            if ($picture->validate())
+            {
+                $picture->size = $picture->instance->size;
+                $picture->type = $picture->instance->type;
+                $picture->extension = $picture->instance->extensionName;
+                $picture->prepare()->save();
+                $picture->instance->saveAs($picture->realPath);
+                $picture->generateThumbs();
+
+                $this->setFlashSuccess(t('Nova slika uspešno objavljena.'));
+                $this->redirect($backUrl);
+            }
+        }
+        
+        $this->render('//common/addPicture', array(
+            'picture' => $picture,
+            'backUrl' => $backUrl,
+        ));
+    }
+    
+    public function actionRemovePicture()
+    {
+        $id = $_POST['id'];
+        $related = $_POST['related'];
+        $pid = $_POST['pid'];
+        
+        $id = $this->checkMediaAccess($id, $related);
+        $picture = $this->loadModel('Picture', $pid);
+        
+        $picture->remove();
+        $this->setFlashSuccess(t('Slika uspešno obrisana.'));
+        
+        $identifier = $related == 'group' ? 'gid' : 'uid';
+        $this->redirect(array("/$related/view", $identifier => $id));
+    }
+    
+    private function checkMediaAccess($id, $related)
+    {
+        switch ($related)
+        {
+            case 'group';
+                if (!Picture::belongsToGroup($id))
+                {
+                    throw new CHttpException(403);
+                }
+                break;
+            case 'artist':
+                if (!Picture::belongsToArtist($id))
+                {
+                    throw new CHttpException(403);
+                }
+                break;
+            case 'user':
+                $id = u()->id;
+                break;
+            default:
+                throw new CHttpException(400);
+                break;
+        }
+        
+        return $id;
+    }
 
 }

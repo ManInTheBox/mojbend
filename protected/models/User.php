@@ -84,6 +84,7 @@ class User extends ActiveRecord
             'internalErrorLogs' => array(self::HAS_MANY, 'InternalErrorLog', 'user_id'),
             'person' => array(self::HAS_ONE, 'Person', 'user_id'),
             'userLogs' => array(self::HAS_MANY, 'UserLog', 'user_id'),
+            'profilePicture' => array(self::BELONGS_TO, 'Picture', 'profile_picture_id'),
         );
     }
 

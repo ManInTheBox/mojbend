@@ -17,6 +17,10 @@
         <td><?php echo $form->textField($group,'founded_date', array('style' => 'width: 420px;', 'readonly' => 'readonly')); ?></td>
     </tr>
     <tr>
+        <td><?php echo $form->labelEx($group,'location'); ?></td>
+        <td><?php echo $form->textField($group,'location', array('style' => 'width: 420px;')); ?></td>
+    </tr>
+    <tr>
         <td><?php echo $form->labelEx($group,'official_website'); ?></td>
         <td><?php echo $form->textField($group,'official_website', array('style' => 'width: 420px;')); ?></td>
     </tr>
@@ -47,6 +51,16 @@
     $('#Group_founded_date').datepicker({
         dateFormat: 'dd.mm.yy',
         changeYear: true,
-        yearRange: '1920:<?php echo date('Y'); ?>'
+        yearRange: '1920:<?php echo date('Y'); ?>',
+        monthNames: [
+            'Januar', 'Februar', 'Mart', 'April',
+            'Maj', 'Jun', 'Jul', 'Avgust',
+            'Septembar', 'Oktobar', 'Novembar', 'Decembar'
+        ],
+        dayNamesMin: [
+            'Pon', 'Uto', 'Sre',
+            'Čet', 'Pet', 'Sub', 'Ned'
+        ],
+        defaultDate: '01.01.2008'
     });
 </script>

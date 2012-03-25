@@ -260,13 +260,13 @@ class UserController extends Controller
                     $user->password = User::encryptPassword($newPasswordForm->newPassword, $user->salt);
                 }
                 
-                $user->person->save();
+                $user->person->save(false);
                 
                 if ($user->isArtist)
                 {
                     $artist = new Artist();
                     $artist->user_id = $user->id;
-                    $artist->save();
+                    $artist->save(false);
                     u()->setState('artistPending', true);
                     
                     $this->setFlashSuccess();
@@ -281,6 +281,10 @@ class UserController extends Controller
             'person' => $user->person,
             'newPasswordForm' => $newPasswordForm
         ));
+    }
+    
+    public function actionView($uid)
+    {
     }
 
 }

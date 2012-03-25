@@ -41,7 +41,7 @@ class ArtistGroup extends ActiveRecord
     public function rules()
     {
         return array(
-            array('artist_id, group_id, created_at', 'required'),
+            array('artist_id, group_id', 'required'),
             array('artist_id, group_id', 'numerical', 'integerOnly'=>true),
             array('created_at', 'length', 'max'=>10),
         );
