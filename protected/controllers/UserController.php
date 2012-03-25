@@ -31,7 +31,7 @@ class UserController extends Controller
         return array(
             array('allow',
                 'actions' => array(
-                    'home',
+                    'home', 'search',
                 ),
                 'users' => array('*'),
             ),
@@ -48,6 +48,13 @@ class UserController extends Controller
                 ),
                 'users' => array('@'),
             ),
+            array('allow',
+                'actions' => array(
+                    'profilePicture',
+                ),
+                'users' => array('@'),
+                'verbs' => array('POST'),
+            ),            
             array('deny',
                 'users' => array('*'),
             ),
@@ -286,5 +293,26 @@ class UserController extends Controller
     public function actionView($uid)
     {
     }
+    
+    public function actionProfilePicture()
+    {
+        if (ajax())
+        {
+            $uid = $_POST['uid'];
+            $pid = $_POST['pid'];
+            $user = $this->loadModel('User', $uid);
+            $user->profile_picture_id = $pid;
+            $user->save();
+            echo json_encode(array(
+                'src' => $user->profilePicture->shortPath,
+                'href' => $user->profilePicture->getShortPath('_large'),
+            ));
+            a()->end();
+        }
+        else
+        {
+            throw new CHttpException(400);
+        }
+    }    
 
 }

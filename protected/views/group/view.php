@@ -61,7 +61,6 @@
     echo CHtml::endForm();
 ?>
 
-
 <div id="gallery">
 <?php foreach ($pictures as $i => $picture) { ?>
     <div class="thumb">

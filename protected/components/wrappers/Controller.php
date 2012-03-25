@@ -237,5 +237,21 @@ class Controller extends CController
         
         return $id;
     }
+    
+    public function actionSearch()
+    {
+        if (ajax())
+        {
+            $q = $_GET['term'];
+            
+            $result[] = array(
+                'item' => 'adfsfd',
+                'value' => 'asdfhasfdddddddddddddfasdh'
+            );
+            echo json_encode($result);
+            a()->end();
+        }
+        $this->render('//common/search');
+    }
 
 }

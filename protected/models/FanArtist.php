@@ -34,7 +34,7 @@ class FanArtist extends ActiveRecord
     public function rules()
     {
         return array(
-            array('fan_id, artist_id, created_at', 'required'),
+            array('fan_id, artist_id', 'required'),
             array('fan_id, artist_id', 'numerical', 'integerOnly' => true),
             array('created_at', 'length', 'max' => 10),
         );

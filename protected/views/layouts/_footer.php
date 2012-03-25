@@ -27,10 +27,9 @@
    </div>
     <div class="footer-box end-footer-box">
         <h4><?php echo t('Pretraga'); ?></h4>
-        <form action="#" method="get">
+        <form action="<?php echo url('search'); ?>">
             <p>
-                <input type="text" id="searchquery" size="18" name="searchterm" />
-
+                <input type="text" id="searchquery" size="18" name="term" />
                 <input type="submit" id="searchbutton" value="Search" class="formbutton" />
             </p>
         </form>
@@ -40,3 +39,12 @@
 <div id="footer-links">
     <p><?php echo t('Sva prava zadržana'); ?> &copy; <a href="<?php echo bu(); ?>">mojbend.rs 2012.</a></p>
 </div>
+
+<script type="text/javascript">
+    $('#searchquery').autocomplete({
+        minLength: 1,
+//        anim : 'bounce',
+        source: '<?php echo url('search');?>',
+        delay: 300
+     });
+</script>

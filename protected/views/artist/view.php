@@ -12,8 +12,8 @@
     </tr>
     <tr>
         <td>
-            <a style="position: relative;" href="<?php echo $artist->user->profilePicture->getShortPath('_large'); ?>" class="fancybox">
-                <img id="profilePicture" alt="<?php echo e($artist->user->person->fullName); ?>" title="<?php echo e($artist->user->person->fullName); ?>" src="<?php echo $artist->user->profilePicture->shortPath; ?>" />
+            <a style="position: relative;" href="<?php echo $user->profilePicture->getShortPath('_large'); ?>" class="fancybox">
+                <img id="profilePicture" alt="<?php echo e($person->fullName); ?>" title="<?php echo e($person->fullName); ?>" src="<?php echo $user->profilePicture->shortPath; ?>" />
             </a>
         </td>
         <td>
@@ -34,10 +34,11 @@
         <td><?php echo e($person->getAttributeLabel('birth_date')); ?>:</td>
         <td><?php echo e($person->birth_date); ?></td>
     </tr>
-    
-
+    <tr>
+        <td><?php echo e($person->getAttributeLabel('gender')); ?>:</td>
+        <td><?php echo !empty($person->gender) ? e($person->gender) : $person->emptyMessage; ?></td>
+    </tr>
 </table>
-
 
 <?php
     echo CHtml::beginForm(array('removePicture'), 'post', array('id' => 'removePictureForm'));
@@ -47,25 +48,91 @@
     echo CHtml::endForm();
 ?>
 
-<?php foreach ($pictures as $picture) { ?>
-<div>
-    <?php
-        if ($isOwner) // owner
-        {
-            echo l(t('Obriši'), '#', array('id' => $picture->id, 'class' => 'removePicture'));
-        }
-    ?>
-    <a href="<?php echo $picture->shortPath; ?>" class="fancybox">
-        <img alt="<?php echo e($picture->name); ?>" title="<?php echo e($picture->name); ?>" src="<?php echo $picture->shortPath; ?>" />
-    </a>
-</div>
+<div id="gallery">
+<?php foreach ($pictures as $i => $picture) { ?>
+    <div class="thumb">
+        <?php if ($isOwner) { ?>
+            <a class="removePicture" href="#" id="<?php echo $picture->id; ?>"><?php echo t('Obriši'); ?></a>
+            <a class="setProfilePicture" href="#" id="<?php echo $picture->id; ?>"><?php echo t('Postavi za profil sliku'); ?></a>
+        <?php } ?>
+        <a rel="pictureGroup" href="<?php echo $picture->getShortPath('_large'); ?>" class="fancybox">
+            <img alt="<?php echo e($picture->name); ?>" title="<?php echo e($picture->name); ?>" src="<?php echo $picture->getShortPath('_small'); ?>" />
+        </a>
+    </div>
 <?php } ?>
+</div>
 
 <script type="text/javascript">
 $(function() {
+    var profilePicture = <?php echo $user->profilePicture->id; ?>;
+    
     $('.removePicture').click(function () {
+        if ($(this).attr('id') == profilePicture) {
+            alert('<?php echo t('Ne možete obrisati ovu sliku jer je ona profilna.'); ?>');
+            return false;
+        }
+    
         $('#pid').val($(this).attr('id'));
         $('#removePictureForm').submit();
     });
+    
+    $('.setProfilePicture').click(function (e) {
+        e.preventDefault();
+        var pid = $(this).attr('id');
+        $.ajax({
+            url: '<?php echo url('/user/profilePicture');?>',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                CSRF_TOKEN: '<?php echo r()->getCsrfToken(); ?>',
+                uid: '<?php echo u()->id; ?>',
+                pid: pid
+            },
+            success: function (res) {
+                $('#profilePicture').attr('src', res.src);
+                $('#profilePicture').parent('.fancybox').attr('href', res.href);
+                profilePicture = pid;
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    }); 
+    
+    $('#becomeFan').click(function (e) {
+        
+        <?php if (guest()) { ?>
+            window.location = '<?php echo url('/user/login'); ?>';
+        <?php } ?>
+        
+        e.preventDefault();
+        $.ajax({
+            url: '<?php echo url('/artist/fan'); ?>',
+            type: 'POST',
+            data: {
+                CSRF_TOKEN: '<?php echo r()->getCsrfToken(); ?>',
+                uid: '<?php echo u()->id; ?>'
+            },
+            success: function (res) {
+                $('#becomeFan').val(res);
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });   
+    
+    $('#readMore').click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '<?php echo url('/artist/moreDescription', array('uid' => $user->id));?>',
+            success: function (res) {
+                $('#description').text(res);
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });    
 });
 </script>

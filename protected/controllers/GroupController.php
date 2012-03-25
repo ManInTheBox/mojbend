@@ -22,7 +22,8 @@ class GroupController extends Controller
         return array(
             array('allow',
                 'actions' => array(
-                    'list', 'view', 'moreDescription'
+                    'list', 'view', 'moreDescription',
+                    'search',
                 ),
                 'users' => array('*'),
             ),
@@ -35,7 +36,7 @@ class GroupController extends Controller
             ),
             array('allow',
                 'actions' => array(
-                    'delete', 'removePicture', 'fan', 'profilePicture'
+                    'delete', 'removePicture', 'fan', 'profilePicture',
                 ),
                 'users' => array('@'),
                 'verbs' => array('POST'),
@@ -50,9 +51,10 @@ class GroupController extends Controller
     {
         $groups = new CActiveDataProvider('Group', array(
                     'pagination' => array(
-                        'pageSize' => 5,
+                        'pageSize' => 1,
                     ),
                 ));
+        
         $this->render('list', array('groups' => $groups));
     }
 
@@ -99,7 +101,7 @@ class GroupController extends Controller
     {
         if (!Artist::belongsToArtist(u()->id))
         {
-            $this->setFlashInfo(t('Da biste osnovali bend morate se afirmisati kao muzičar.'));
+            $this->setFlashInfo(t('Da biste osnovali bend morate se prvo afirmisati kao muzičar.'));
             $this->redirect(array('/user/edit'));
         }
         
