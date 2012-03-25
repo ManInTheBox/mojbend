@@ -58,6 +58,16 @@ $form = $this->beginWidget('ActiveForm', array(
     $('#Group_founded_date').datepicker({
         dateFormat: 'dd.mm.yy',
         changeYear: true,
-        yearRange: '1920:<?php echo date('Y'); ?>'
+        yearRange: '1920:<?php echo date('Y'); ?>',
+        monthNames: [
+            'Januar', 'Februar', 'Mart', 'April',
+            'Maj', 'Jun', 'Jul', 'Avgust',
+            'Septembar', 'Oktobar', 'Novembar', 'Decembar'
+        ],
+        dayNamesMin: [
+            'Pon', 'Uto', 'Sre',
+            'Čet', 'Pet', 'Sub', 'Ned'
+        ],
+        defaultDate: '01.01.2008'
     });
 </script>

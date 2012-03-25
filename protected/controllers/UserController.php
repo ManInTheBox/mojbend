@@ -238,6 +238,7 @@ class UserController extends Controller
     public function actionEdit()
     {
         $user = $this->loadModel('User', u()->id);
+        $user->person->displayDate();
         
         if ($user->isArtist)
         {

@@ -54,12 +54,7 @@ class GroupController extends Controller
     public function actionView($gid)
     {
         $group = $this->loadModel('Group', $gid);
-        $group->scenario = 'preview';
-
-        if ($group->founded_date !== $group->emptyMessage)
-        {
-            $group->localizeDate();
-        }
+        $group->displayDate();
         $this->render('view', array('group' => $group));
     }
 
@@ -112,32 +107,16 @@ class GroupController extends Controller
     public function actionEdit($gid)
     {
         $group = $this->loadModel('Group', $gid);
-        $group->localizeDate();
+        $group->displayDate();
 
         if (isset($_POST['Group']))
         {
             $group->attributes = $_POST['Group'];
 
-            if (!empty ($group->founded_date))
-            {
-                $group->localizeDate('-', '.');
-            }
-
             if ($group->save())
             {
                 $this->setFlashSuccess();
-                if (!empty ($group->founded_date))
-                {
-                    $group->localizeDate();
-                }
                 $this->redirect(array('/group/view', 'gid' => $gid));
-            }
-            else
-            {
-                if (!empty ($group->founded_date))
-                {
-                   $group->localizeDate();
-                }
             }
         }
         $this->render('edit', array('group' => $group));

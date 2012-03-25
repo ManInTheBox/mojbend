@@ -53,6 +53,7 @@ class Group extends ActiveRecord
             array('official_website, facebook_url, twitter_url, youtube_url', 'url', 'defaultScheme' => 'http'),
             array('name', 'length', 'max' => 64),
             array('created_at', 'length', 'max' => 10),
+            array('location', 'length', 'max' => 128),
             array('official_website, facebook_url, twitter_url, youtube_url', 'length', 'max' => 256),
             array('description, founded_date', 'safe'),
         );
@@ -86,13 +87,16 @@ class Group extends ActiveRecord
             'location' => t('Lokacija'),
             'facebook_url' => t('Facebook'),
             'twitter_url' => t('Twitter'),
-            'youtube_url' => t('Youtube'),
+            'youtube_url' => t('You Tube'),
         );
     }
 
     protected function beforeSave()
     {
-        $this->created_at = time();
+        if ($this->isNewRecord)
+        {
+            $this->created_at = time();
+        }
         $this->name = trim(mb_ucwords($this->name));
         return parent::beforeSave();
     }
@@ -102,26 +106,26 @@ class Group extends ActiveRecord
         return $this->artists(array('condition' => 'role = ' . ArtistGroup::ROLE_ADMIN));
     }
 
-    public function __get($name)
-    {
-        $v = parent::__get($name);
-
-        if ($this->getScenario() == 'preview')
-        {
-            if (empty($v) || $v === '0000-00-00')
-            {
-                return $this->emptyMessage;
-            }
-            else
-            {
-                return $v;
-            }
-        }
-        else
-        {
-            return $v;
-        }
-    }
+//    public function __get($name)
+//    {
+//        $v = parent::__get($name);
+//
+//        if ($this->getScenario() == 'preview')
+//        {
+//            if (empty($v) || $v === '0000-00-00')
+//            {
+//                return $this->emptyMessage;
+//            }
+//            else
+//            {
+//                return $v;
+//            }
+//        }
+//        else
+//        {
+//            return $v;
+//        }
+//    }
 
     public function localizeDate($separator = '.', $explode = '-')
     {

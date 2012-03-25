@@ -54,6 +54,7 @@
     </tr>
     <tr>
         <td class="button"><?php echo Html::submitButton(t('Sačuvaj izmene')); ?></td>
+        <td class="button"><?php echo l(Html::button(t('Odustani')), array('/artist/view', 'uid' => u()->id)); ?></td>
     </tr>
 </table>
 

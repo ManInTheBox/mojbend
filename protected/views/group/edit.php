@@ -38,6 +38,7 @@
     </tr>
     <tr>
         <td class="button"><?php echo CHtml::submitButton(t('Sačuvaj izmene')); ?></td>
+        <td class="button"><?php echo l(CHtml::button(t('Odustani')), array('/group/view', 'gid' => $group->id)); ?></td>
     </tr>
 </table>
 <?php $this->endWidget(); ?>

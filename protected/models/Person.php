@@ -41,7 +41,7 @@ class Person extends ActiveRecord
     public function rules()
     {
         return array(
-            array('user_id', 'required'),
+            array('first_name, last_name', 'required', 'on' => 'artistEdit'),
             array('user_id, gender', 'numerical', 'integerOnly' => true),
             array('first_name, last_name', 'length', 'max' => 32, 'min' => 2),
             array('birth_date', 'safe'),

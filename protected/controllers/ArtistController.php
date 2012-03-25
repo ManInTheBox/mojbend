@@ -56,6 +56,9 @@ class ArtistController extends Controller
             ),
         ));
         $artist->scenario = 'edit';
+        $artist->user->person->scenario = 'artistEdit';
+        $artist->user->person->displayDate();
+        
         $newPasswordForm = new NewPasswordForm();
         
         if (isset ($_POST['Artist']))
@@ -68,11 +71,12 @@ class ArtistController extends Controller
             if ($artist->user->validate() & $artist->user->person->validate() & $artist->validate() & $newPasswordForm->validate())
             {
                 $artist->user->person->save();
+                $artist->save();
+                u()->setState('artistPending', true, true);
                 
                 if (!$_POST['User']['isArtist'])
                 {
                     $artist->delete();
-                    u()->setState('artistPending', true, true);
                     $this->setFlashSuccess();
                     $this->redirect(array('/user/edit'));
                 }
@@ -91,5 +95,13 @@ class ArtistController extends Controller
     
     public function actionView($uid)
     {
+        $artist = $this->loadModel('Artist', $uid);
+        $artist->user->person->displayDate();
+        
+        $this->render('//artist/view', array(
+            'artist' => $artist,
+            'user' => $artist->user,
+            'person' => $artist->user->person
+        ));
     }
 }
