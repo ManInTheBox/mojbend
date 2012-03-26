@@ -8,7 +8,6 @@
  * @property integer $receiver_id
  * @property integer $group_id
  * @property string $created_at
- * @property integer $status
  *
  * @property Group $group
  * @property Artist $sender
@@ -16,6 +15,7 @@
  */
 class GroupMemberRequest extends ActiveRecord
 {
+
     /**
      * Returns the static model of the specified AR class.
      * @return GroupMemberRequest the static model class
@@ -40,7 +40,7 @@ class GroupMemberRequest extends ActiveRecord
     {
         return array(
             array('sender_id, receiver_id, group_id', 'required'),
-            array('sender_id, receiver_id, group_id, status', 'numerical', 'integerOnly'=>true),
+            array('sender_id, receiver_id, group_id', 'numerical', 'integerOnly'=>true),
             array('created_at', 'length', 'max'=>10),
         );
     }
@@ -57,23 +57,8 @@ class GroupMemberRequest extends ActiveRecord
         );
     }
 
-    /**
-     * @return array customized attribute labels (name => label)
-     */
-    public function attributeLabels()
-    {
-        return array(
-            'sender_id' => t('Sender'),
-            'receiver_id' => t('Receiver'),
-            'group_id' => t('Group'),
-            'created_at' => t('Created At'),
-            'status' => t('Status'),
-        );
-    }
-
     protected function beforeSave()
     {
-        $this->status = 1; // test
         $this->created_at = time();
         return parent::beforeSave();
     }

@@ -19,10 +19,11 @@ class PasswordResetForm extends CFormModel
     {
         return array(
             array('email', 'required'),
+            array('email', 'email', 'checkMX' => true),
             array('captchaCode',
                'ext.recaptcha.EReCaptchaValidator',
-               'privateKey'=>'6LdTbsMSAAAAAAVxt4iS3tv4G2vuOu85Fr8quz_0'),
-            array('email', 'email', 'checkMX' => true),
+               'privateKey'=>'6LdTbsMSAAAAAAVxt4iS3tv4G2vuOu85Fr8quz_0'
+            ),
         );
     }
 
@@ -33,7 +34,7 @@ class PasswordResetForm extends CFormModel
     {
         return array(
             'email' => t('E-mail'),
-            'captchaCode' => t('Captcha'),
+            'captchaCode' => t('Verifikacioni kod'),
         );
     }
 

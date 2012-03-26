@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 25, 2012 at 11:57 PM
+-- Generation Time: Mar 26, 2012 at 11:39 PM
 -- Server version: 5.1.61
 -- PHP Version: 5.3.3-1ubuntu9.10
 
@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS `artist` (
 --
 
 INSERT INTO `artist` (`user_id`, `list_artist_type_id`, `description`) VALUES
-(1, 1, 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Pellentesque venenatis sagittis enim. Maecenas ligula erat, egestas congue, varius nec, sagittis nec, purus. In neque. Curabitur at metus tincidunt dui tristique molestie. Donec porta molestie tortor. Fusce euismod consectetuer sapien. Fusce ac velit.'),
-(2, 3, 'sdfasfd');
+(1, 1, 'gd'),
+(2, 1, 'asdf');
 
 -- --------------------------------------------------------
 
@@ -62,8 +62,8 @@ CREATE TABLE IF NOT EXISTS `artist_group` (
 --
 
 INSERT INTO `artist_group` (`artist_id`, `group_id`, `created_at`, `role`) VALUES
-(1, 5, 1332688865, 0),
-(2, 6, 1332709136, 0);
+(1, 6, 1332793726, 0),
+(2, 6, 1332797817, 2);
 
 -- --------------------------------------------------------
 
@@ -116,15 +116,15 @@ CREATE TABLE IF NOT EXISTS `email` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `receiver_address` (`receiver_address`(255))
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=19 ;
 
 --
 -- Dumping data for table `email`
 --
 
 INSERT INTO `email` (`id`, `user_id`, `created_at`, `status`, `type`, `priority`, `sending_time`, `sending_counter`, `hash`, `error_message`, `host`, `host_name`, `protocol`, `charset`, `from_name`, `from_address`, `receiver_name`, `receiver_address`, `receivers`, `subject`, `body`) VALUES
-(15, 1, 1332685663, 0, 1, 1, NULL, 0, '2ff8c457156f0e1417a4989b5ebb74e6', NULL, 'localhost', 'master.mojbend.rs', 'smtp', 'UTF-8', 'Mojbend.rs', 'noreply@mojbend.rs', 'test1@gmail.com', 'test1@gmail.com', NULL, 'Mojbend.rs Account Activation', 'OVO JE REGISTER MEJL<br />\n<a href="http://localhost/mojbend/webroot/user/activate/uid/1/token/57de05eab6c5ed5e3f26bfb1aed70275">http://localhost/mojbend/webroot/user/activate/uid/1/token/57de05eab6c5ed5e3f26bfb1aed70275</a>'),
-(16, 2, 1332709023, 0, 1, 1, NULL, 0, '494119e9d2b961b00d365f51b6b901b6', NULL, 'localhost', 'master.mojbend.rs', 'smtp', 'UTF-8', 'Mojbend.rs', 'noreply@mojbend.rs', 'test2@gmail.com', 'test2@gmail.com', NULL, 'Mojbend.rs Account Activation', 'OVO JE REGISTER MEJL<br />\n<a href="http://localhost/mojbend/webroot/user/activate/uid/2/token/082f209fa616edc450fee4b20c3b9eb6">http://localhost/mojbend/webroot/user/activate/uid/2/token/082f209fa616edc450fee4b20c3b9eb6</a>');
+(17, 1, 1332777050, 0, 1, 1, NULL, 0, 'a3f58cd47751ab637d509daf13bb56a9', NULL, 'localhost', 'master.mojbend.rs', 'smtp', 'UTF-8', 'Mojbend.rs', 'noreply@mojbend.rs', 'test1@test.com', 'test1@test.com', NULL, 'Mojbend.rs Account Activation', 'OVO JE REGISTER MEJL<br />\n<a href="http://localhost/mojbend/webroot/user/activate/uid/1/token/426594703849f96ae6929ab5feb073d6">http://localhost/mojbend/webroot/user/activate/uid/1/token/426594703849f96ae6929ab5feb073d6</a>'),
+(18, 2, 1332794640, 0, 1, 1, NULL, 0, '0e383e43a0e6a895bcff3d2b203f4d17', NULL, 'localhost', 'master.mojbend.rs', 'smtp', 'UTF-8', 'Mojbend.rs', 'noreply@mojbend.rs', 'test2@test.com', 'test2@test.com', NULL, 'Mojbend.rs Account Activation', 'OVO JE REGISTER MEJL<br />\n<a href="http://localhost/mojbend/webroot/user/activate/uid/2/token/f9d2dbfe4884a6a7df5423ca4857b555">http://localhost/mojbend/webroot/user/activate/uid/2/token/f9d2dbfe4884a6a7df5423ca4857b555</a>');
 
 -- --------------------------------------------------------
 
@@ -146,8 +146,7 @@ CREATE TABLE IF NOT EXISTS `fan_artist` (
 --
 
 INSERT INTO `fan_artist` (`fan_id`, `artist_id`, `created_at`) VALUES
-(1, 1, 1332707368),
-(2, 2, 1332709127);
+(1, 1, 1332793788);
 
 -- --------------------------------------------------------
 
@@ -169,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `fan_group` (
 --
 
 INSERT INTO `fan_group` (`fan_id`, `group_id`, `created_at`) VALUES
-(1, 5, 1332702075);
+(2, 6, 1332797815);
 
 -- --------------------------------------------------------
 
@@ -199,8 +198,7 @@ CREATE TABLE IF NOT EXISTS `group` (
 --
 
 INSERT INTO `group` (`id`, `name`, `description`, `created_at`, `founded_date`, `official_website`, `location`, `facebook_url`, `twitter_url`, `youtube_url`, `profile_picture_id`) VALUES
-(5, 'Soundgarden', 'These slides can contain anything a webpage can!HTML, Javascript, images, flash or whatever!They''re completely easy to edit and add to as well, no need to bother editing or even going anywhere near some confusing Javascript files, simply add a <div></div> tag with your slider content to the "slides" contain - it takes just seconds to do!\r\n\r\nThese slides work using the absolutely wonderful lightweight jQuery plugin jFlow, originally written by Kean Loong and modified by both Mauro Belgiovine and spyka Webmaster. The script has been licensed under the open source MIT license, so feel free to play around and modify it as much or as little as you wish', 1332688865, '2008-01-16', '', '', '', '', '', 69),
-(6, 'Xdffds Fdss Df Sdfsafd Afdfsd F Asdfsd', '', 1332709136, '2008-01-16', '', '', '', '', '', 1);
+(6, 'Fasdf', '', 1332793726, '0000-00-00', '', '', '', '', '', 1);
 
 -- --------------------------------------------------------
 
@@ -213,7 +211,6 @@ CREATE TABLE IF NOT EXISTS `group_member_request` (
   `receiver_id` int(11) NOT NULL,
   `group_id` int(11) NOT NULL,
   `created_at` int(10) unsigned NOT NULL,
-  `status` tinyint(4) NOT NULL,
   PRIMARY KEY (`sender_id`,`receiver_id`),
   KEY `sender_id` (`sender_id`),
   KEY `receiver_id` (`receiver_id`),
@@ -343,8 +340,8 @@ CREATE TABLE IF NOT EXISTS `person` (
 --
 
 INSERT INTO `person` (`user_id`, `first_name`, `last_name`, `gender`, `birth_date`) VALUES
-(1, 'Asdf', 'Asdf', NULL, '2012-03-07'),
-(2, 'Xxxxxx', 'Xcv', NULL, '2012-03-12');
+(1, 'Ee', 'Ert', NULL, '2012-03-21'),
+(2, 'Zarko', 'Stankovic', NULL, '2012-03-07');
 
 -- --------------------------------------------------------
 
@@ -370,19 +367,16 @@ CREATE TABLE IF NOT EXISTS `picture` (
   KEY `path` (`path`(255)),
   KEY `related_id` (`related_id`),
   KEY `related` (`related`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=82 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=99 ;
 
 --
 -- Dumping data for table `picture`
 --
 
 INSERT INTO `picture` (`id`, `name`, `path`, `size`, `type`, `extension`, `created_at`, `title`, `description`, `location`, `date`, `related_id`, `related`) VALUES
-(1, 'f113fb0d2b031c5b7630d4e226', 'c6/93/26/f113fb0d2b031c5b7630d4e226', 309076, 'image/jpeg', 'jpg', 1332696580, NULL, NULL, NULL, NULL, NULL, NULL),
-(69, 'f069b85f042f2c56cc99c9add4', '1d/e2/b0/f069b85f042f2c56cc99c9add4', 1177903, 'image/jpeg', 'jpg', 1332698076, '', '', '', '0000-00-00', 5, 'group'),
-(76, 'f924c0d0e6a2594cc01ef2d3ff', '03/63/2a/f924c0d0e6a2594cc01ef2d3ff', 236734, 'image/png', 'png', 1332701890, '', '', '', '0000-00-00', 5, 'group'),
-(77, 'f9e702d08efc360247ef594b1c', '03/3a/37/f9e702d08efc360247ef594b1c', 236734, 'image/png', 'png', 1332706826, '', '', '', '0000-00-00', 1, 'artist'),
-(80, 'c2a815611100673c7f2f4c0b3c', 'fb/1f/cf/c2a815611100673c7f2f4c0b3c', 335004, 'image/jpeg', 'jpg', 1332707022, '', '', '', '0000-00-00', 1, 'artist'),
-(81, 'fd819da7f684784f6c6e86b307', 'b5/6e/e9/fd819da7f684784f6c6e86b307', 84238, 'image/jpeg', 'jpg', 1332707031, '', '', '', '0000-00-00', 1, 'artist');
+(1, 'e60aa68b2684cfcf6bdaa2afb2', 'cb/f6/aa/e60aa68b2684cfcf6bdaa2afb2', 497583, 'image/jpeg', 'jpg', 1332696580, NULL, NULL, NULL, NULL, NULL, NULL),
+(96, '52b046ca3d7e4c9b23ea79b9b8', '84/b4/f4/52b046ca3d7e4c9b23ea79b9b8', 203598, 'image/png', 'png', 1332793805, '', '', '', '0000-00-00', 1, 'artist'),
+(98, '22645a29c790fa124f4b2bd132', '25/47/17/22645a29c790fa124f4b2bd132', 497583, 'image/jpeg', 'jpg', 1332797415, '', '', '', '0000-00-00', 2, 'artist');
 
 -- --------------------------------------------------------
 
@@ -436,8 +430,8 @@ CREATE TABLE IF NOT EXISTS `user` (
 --
 
 INSERT INTO `user` (`id`, `email`, `password`, `salt`, `status`, `created_at`, `language`, `cookie_token`, `logged_in`, `activation_hash`, `username`, `profile_picture_id`) VALUES
-(1, 'test1@gmail.com', 'ffb83478af93747dd2c152d563f1458c', '177428a289c95d4e7c6834f97d702fb6', 2, 1332685663, 'sr_yu', '43714679665a8a30f75bb97c706065fc', 0, '57de05eab6c5ed5e3f26bfb1aed70275', NULL, 81),
-(2, 'test2@gmail.com', '7e2dc933fdd7ae2d6e78cdee3744e257', 'c8c00d4759586c6d29b79f48bc6418e5', 2, 1332709023, 'sr_yu', '995ffeb68a6ba79474b898531cc7fad2', 1, '082f209fa616edc450fee4b20c3b9eb6', NULL, 1);
+(1, 'test1@test.com', '5b861c373781d23d9ccb900a5144d63f', '1b4c0e3d6257e5b13d47240f364e9e8a', 2, 1332777050, 'sr_yu', '005812a72f9d93ab7d67928139be2e13', 0, '426594703849f96ae6929ab5feb073d6', NULL, 96),
+(2, 'test2@test.com', '6432717f42ba730efbbe8abd484f9d19', '0c718c5ce4ed4fe149b31bbe6957ec49', 2, 1332794640, 'sr_yu', '417e1ab211815c69c860c5480aed4e53', 1, 'f9d2dbfe4884a6a7df5423ca4857b555', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -454,20 +448,16 @@ CREATE TABLE IF NOT EXISTS `user_log` (
   PRIMARY KEY (`id`),
   KEY `user_id_idx` (`user_id`),
   KEY `ip_address` (`ip_address`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=47 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=51 ;
 
 --
 -- Dumping data for table `user_log`
 --
 
 INSERT INTO `user_log` (`id`, `user_id`, `created_at`, `ip_address`, `user_agent`) VALUES
-(40, 1, 1332685685, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.83 Safari/535.11'),
-(41, 1, 1332691076, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.83 Safari/535.11'),
-(42, 1, 1332691237, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.83 Safari/535.11'),
-(43, 1, 1332692046, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.83 Safari/535.11'),
-(44, 1, 1332697048, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.83 Safari/535.11'),
-(45, 1, 1332708131, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.83 Safari/535.11'),
-(46, 2, 1332709037, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.83 Safari/535.11');
+(48, 1, 1332777067, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.83 Safari/535.11'),
+(49, 1, 1332783465, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.83 Safari/535.11'),
+(50, 2, 1332794658, 2130706433, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.83 Safari/535.11');
 
 --
 -- Constraints for dumped tables

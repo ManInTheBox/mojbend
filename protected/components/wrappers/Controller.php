@@ -243,11 +243,25 @@ class Controller extends CController
         if (ajax())
         {
             $q = $_GET['term'];
+            $result = array();
+
+            if (isset ($_GET['artist']))
+            {
+                $artists = Artist::model()->findAll(array(
+                    'with' => 'user.person',
+                    'condition' => 'person.first_name LIKE :q OR person.last_name LIKE :q',
+                    'params' => array(':q' => "%$q%")
+                ));
+                
+                foreach ($artists as $artist)
+                {
+                    $result[] = array(
+                        'id' => $artist->user_id,
+                        'label' => $artist->user->person->fullName,
+                    );
+                }
+            }
             
-            $result[] = array(
-                'item' => 'adfsfd',
-                'value' => 'asdfhasfdddddddddddddfasdh'
-            );
             echo json_encode($result);
             a()->end();
         }

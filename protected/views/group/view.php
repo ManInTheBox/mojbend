@@ -21,7 +21,7 @@
             <div style="height: 160px;">
                 <a href="#" class="button"><input id="becomeFan" type="button" value="<?php echo $fanButton; ?>" /></a>
                 <br /><br />
-                <a href="#" class="button"><input type="button" value="<?php echo $joinButton; ?>" /></a>
+                <a href="#" class="button"><input id="joinGroup" type="button" value="<?php echo $joinButton; ?>" /></a>
             </div>
             <strong><?php echo t('O bendu:'); ?></strong><br /><br /><br />
             <blockquote id="description">
@@ -54,11 +54,17 @@
 </table>
 
 <?php
-    echo CHtml::beginForm(array('removePicture'), 'post', array('id' => 'removePictureForm'));
-    echo CHtml::hiddenField('pid');
-    echo CHtml::hiddenField('id', $group->id);
-    echo CHtml::hiddenField('related', 'group');
-    echo CHtml::endForm();
+    if ($isOwner) {
+        echo CHtml::beginForm(array('removePicture'), 'post', array('id' => 'removePictureForm'));
+        echo CHtml::hiddenField('pid');
+        echo CHtml::hiddenField('id', $group->id);
+        echo CHtml::hiddenField('related', 'group');
+        echo CHtml::endForm();
+        
+        echo CHtml::beginForm(array('/group/delete'), 'post', array('id' => 'removeGroup'));
+        echo CHtml::hiddenField('gid', $group->id);
+        echo CHtml::endForm();
+    }
 ?>
 
 <div id="gallery">
@@ -75,49 +81,185 @@
 <?php } ?>
 </div>
 
+<?php if ($isOwner) { ?>
+<div id="inviteMembersDialog" style="display: none; padding: 25px 0 15px 15px;">
+    <input id="searchArtist" type="text" style="width: 420px; height: 30px; padding: 5px;" />
+    <div id="targetMembers" style="margin-top: 20px;"></div>
+</div>
+<?php } ?>
+
+<div id="dialogMessage">
+    <br />
+    <?php echo t('Uspešno ste pozvali muzičare da se priključe vašem bendu.'); ?>
+</div>
+
 <script type="text/javascript">
 $(function() {
-    $('#inviteMembers').click(function() {
-        var ids = prompt('unesi id-jeve usera');
+
+    $('#dialogMessage').dialog({
+        autoOpen: false,
+        width: 500,
+        resizable: false,
+        modal: true,
+        buttons: [
+            {
+                text: '<?php echo t('Zatvori'); ?>',
+                click: function () {
+                    $(this).dialog('close');
+                }
+            }
+        ]
+    });
+
+<?php if ($isOwner) { ?>
+
+    $('#searchArtist').autocomplete({
+        minLength: 1,
+        source: '<?php echo url('search', array('artist' => true));?>',
+        delay: 300,
+        select: function (event, ui) {
+            var html = [
+               '<span class="targetMembersId" rel="' + ui.item.id + '">',
+                    ui.item.label,
+               ' <a href="#" class="acRemove">ukloni</a><br /><br /></span>'
+            ].join('');
+            $('#targetMembers').append(html);
+            $('#searchArtist').val('')
+            return false;
+        },
+        focus: function (event, ui) {
+            return false;
+        }
+     });
+
+    $('.acRemove').live('click', function (e) {
+        e.preventDefault();
+        $(this).parent().remove();
+    });
+
+    $('#inviteMembersDialog').dialog({
+        autoOpen: false,
+        width: 500,
+        resizable: false,
+        modal: true,
+        title: '<?php echo t('Pozovite muzičare da se priključe vašem bendu'); ?>',
+        buttons: [
+            {
+                text: '<?php echo t('Zatvori'); ?>',
+                click: function () {
+                    $(this).dialog('close');
+                }
+            },
+            {
+                text: '<?php echo t('Pozovi'); ?>',
+                click: function () {
+                    var ids = [];
+                    var targets = $.find('.targetMembersId');
+
+                    for (var i = 0; i < targets.length; i++) {
+                        ids.push($(targets[i]).attr('rel'));
+                    }
+                    
+                    $.ajax({
+                        url: '<?php echo url('/group/inviteMembers'); ?>',
+                        data: {
+                            CSRF_TOKEN: '<?php echo r()->getCsrfToken(); ?>',
+                            gid: <?php echo $group->id; ?>,
+                            receivers: ids
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function(data) {
+                            if (targets.length) {
+                                $('#dialogMessage').dialog('open');
+                            }
+                            $(targets).each(function () { $(this).remove(); });
+                        },
+                        error: function(xhr) {
+                            $(targets).each(function () { $(this).remove(); });
+                            console.log(xhr.responseText);
+                        }
+                    });
+                    $(this).dialog('close');
+                }
+            }
+        ]
+    });
+
+    $('#inviteMembers').click(function(e) {
+        e.preventDefault();
+        $('#inviteMembersDialog').dialog('open');
+    });
+
+    var profilePicture = <?php echo $group->profilePicture->id; ?>;
+    $('.removePicture').click(function () {
+        if ($(this).attr('id') == profilePicture) {
+            alert('<?php echo t('Ne možete obrisati ovu sliku jer je ona profilna.'); ?>');
+            return false;
+        }
+
+        $('#pid').val($(this).attr('id'));
+        $('#removePictureForm').submit();
+    });
+
+    $('.setProfilePicture').click(function (e) {
+        e.preventDefault();
+        var pid = $(this).attr('id');
         $.ajax({
-            url: '<?php echo url('/group/inviteMembers'); ?>',
+            url: '<?php echo url('/group/profilePicture');?>',
+            type: 'POST',
+            dataType: 'json',
             data: {
                 CSRF_TOKEN: '<?php echo r()->getCsrfToken(); ?>',
                 gid: <?php echo $group->id; ?>,
-                receivers: ids
+                pid: pid
             },
+            success: function (res) {
+                $('#profilePicture').attr('src', res.src);
+                $('#profilePicture').parent('.fancybox').attr('href', res.href);
+                profilePicture = pid;
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+
+<?php } ?>
+    
+    $('#joinGroup').click(function(e) {
+
+        <?php if (guest()) { ?>
+            window.location = '<?php echo url('/user/login'); ?>';
+        <?php } ?>
+
+        e.preventDefault();
+
+        <?php if ($isOwner) { ?>
+        return confirm('<?php echo t('Vi ste administrator benda.\nAko ga napustite on će biti obrisan.'); ?>')
+            ? $('#removeGroup').submit()
+            : false;
+        <?php } else { ?>
+        $.ajax({
+            url: '<?php echo url('/group/join'); ?>',
             type: 'POST',
             dataType: 'json',
-            success: function(data) {
-                console.log(data);
+            data: {
+                CSRF_TOKEN: '<?php echo r()->getCsrfToken(); ?>',
+                gid: <?php echo $group->id; ?>
+            },
+            success: function(res) {
+                if (res.err) {
+                    window.location = '<?php echo url('/user/edit'); ?>';
+                }
+                $('#joinGroup').val(res.msg);
             },
             error: function(xhr) {
                 console.log(xhr.responseText);
             }
-
         });
-
-        return false;
+        <?php } ?>
     });
-
-//    $('#joinGroup').click(function() {
-//        $.ajax({
-//            url: '<?php echo url('/group/join'); ?>',
-//            type: 'POST',
-//            dataType: 'json',
-//            data: {
-//                CSRF_TOKEN: '<?php echo r()->getCsrfToken(); ?>',
-//                gid: <?php echo $group->id; ?>,
-//                requester: <?php echo u()->id; ?>
-//            },
-//            success: function(data) {
-//                console.log(data);
-//            },
-//            error: function(xhr) {
-//                console.log(xhr.responseText);
-//            }
-//        });
-//    });
     
     $('#becomeFan').click(function (e) {
         
@@ -135,41 +277,6 @@ $(function() {
             },
             success: function (res) {
                 $('#becomeFan').val(res);
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-            }
-        });
-    });
-    
-    var profilePicture = <?php echo $group->profilePicture->id; ?>;
-    
-    $('.removePicture').click(function () {
-        if ($(this).attr('id') == profilePicture) {
-            alert('<?php echo t('Ne možete obrisati ovu sliku jer je ona profilna.'); ?>');
-            return false;
-        }
-    
-        $('#pid').val($(this).attr('id'));
-        $('#removePictureForm').submit();
-    });
-    
-    $('.setProfilePicture').click(function (e) {
-        e.preventDefault();
-        var pid = $(this).attr('id');
-        $.ajax({
-            url: '<?php echo url('/group/profilePicture');?>',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                CSRF_TOKEN: '<?php echo r()->getCsrfToken(); ?>',
-                gid: <?php echo $group->id; ?>,
-                pid: pid
-            },
-            success: function (res) {
-                $('#profilePicture').attr('src', res.src);
-                $('#profilePicture').parent('.fancybox').attr('href', res.href);
-                profilePicture = pid;
             },
             error: function (xhr) {
                 console.log(xhr.responseText);

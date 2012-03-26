@@ -94,7 +94,7 @@ class EReCaptchaValidator extends CValidator
 	                                  $_POST['recaptcha_challenge_field'],
 	                                  $_POST['recaptcha_response_field']);
 		if (!$resp->is_valid) {
-			$message=$this->message!==null?$this->message:Yii::t('imp','The verification code is incorrect.');
+			$message=$this->message!==null?$this->message:t('Verifikacioni kod nije ispravan.');
 			$this->addError($object,$attribute,$message);
 		}
 	}
