@@ -29,7 +29,7 @@ class GroupController extends Controller
             ),
             array('allow',
                 'actions' => array(
-                    'new', 'newFan', 'inviteMembers', 'join', 'edit',
+                    'new', 'newFan', 'inviteMembers', 'edit',
                     'addPicture',
                 ),
                 'users' => array('@'),
@@ -37,6 +37,7 @@ class GroupController extends Controller
             array('allow',
                 'actions' => array(
                     'delete', 'removePicture', 'fan', 'profilePicture',
+                    'join',
                 ),
                 'users' => array('@'),
                 'verbs' => array('POST'),
@@ -144,7 +145,7 @@ class GroupController extends Controller
                 $artistGroup->role = ArtistGroup::ROLE_ADMIN;
                 $artistGroup->save(false);
 
-                $this->setFlashSuccess(t('Group succesfully created.'));
+                $this->setFlashSuccess(t('Bend je uspešno osnovan.'));
                 $this->redirect(array('/group/list'));
             }
         }
@@ -170,13 +171,20 @@ class GroupController extends Controller
         $this->render('edit', array('group' => $group));
     }
 
-    public function actionDelete($gid)
+    public function actionDelete()
     {
+        $gid = $_POST['gid'];
         $group = $this->loadModel('Group', $gid);
 
-        if ($group->delete())
+        if (Group::belongsToGroup($gid, ArtistGroup::ROLE_ADMIN))
         {
-            $this->setFlashSuccess(t('group deleted...'));
+            foreach ($group->pictures as $picture)
+            {
+                $picture->remove();
+            }
+            
+            $group->delete();
+            $this->setFlashSuccess(t('Bend je uspešno obrisan sa sistema.'));
             $this->redirect(array('/group/list'));
         }
     }
@@ -185,24 +193,29 @@ class GroupController extends Controller
     {
         if (ajax() && post())
         {
-            $gid = $_POST['gid'];
-            $receivers = explode(',', $_POST['receivers']);
+            if (isset ($_POST['gid'], $_POST['receivers']))
+            {
+                $gid = $_POST['gid'];
+                $receivers = array_unique($_POST['receivers']);
 
-            $saved = true;
-            foreach ($receivers as $receiver_id)
-            {
-                $request = new GroupMemberRequest();
-                $request->sender_id = u()->id;
-                $request->receiver_id = $receiver_id;
-                $request->group_id = $gid;
-                $saved = $saved & $request->save();
+                $transaction = db()->beginTransaction();
+                try
+                {
+                    foreach ($receivers as $receiver_id)
+                    {
+                        $request = new GroupMemberRequest();
+                        $request->sender_id = u()->id;
+                        $request->receiver_id = $receiver_id;
+                        $request->group_id = $gid;
+                        $request->save();
+                    }
+                    $transaction->commit();
+                }
+                catch (Exception $ex)
+                {
+                    echo $ex->getMessage();
+                }
             }
-            if ($saved)
-            {
-                echo 'ok';
-            }
-            else
-                print_r($request->getErrors());
         }
         else
         {
@@ -239,17 +252,42 @@ class GroupController extends Controller
 
     public function actionJoin()
     {
-        if (ajax() && post())
+        if (ajax())
         {
-            $request = new GroupMemberRequest();
-            $request->sender_id = $_POST['requester'];
-            $request->receiver_id = 1;
-            $request->group_id = $_POST['gid'];
-
-            if ($request->save())
-                echo 'ok';
+            if (!Artist::belongsToArtist(u()->id))
+            {
+                echo json_encode(array(
+                    'err' => true
+                ));
+                $this->setFlashInfo(t('Da biste se priključili bendu morate se prvo afirmisati kao muzičar.'));
+            }
             else
-                echo 'not ok';
+            {
+                $criteria = new CDbCriteria();
+                $criteria->condition = 'artist_id = :id AND group_id = :gid';
+                $criteria->params = array(':id' => u()->id, ':gid' => $_POST['gid']);
+
+                $artistGroup = ArtistGroup::model()->find($criteria);
+                if (!$artistGroup)
+                {
+                    $artistGroup = new ArtistGroup();
+                    $artistGroup->artist_id = u()->id;
+                    $artistGroup->group_id = $_POST['gid'];
+                    $artistGroup->role = ArtistGroup::ROLE_MEMBER;
+
+                    if ($artistGroup->save(false))
+                    {
+                        echo json_encode(array('msg' => t('Napusti bend')));
+                    }
+                }
+                else
+                {
+                    $artistGroup->delete();
+                    echo json_encode(array('msg' => t('Priključi se')));
+                }
+            }
+            
+            a()->end();
         }
         else
         {
