@@ -1,6 +1,6 @@
 <?php $this->renderFlash(); ?>
 
-<table>
+<table cellspacing="0">
     <tr>
         <td>
             <h4><?php echo l(e($group->name), array()); ?></h4>
@@ -22,6 +22,10 @@
                 <a href="#" class="button"><input id="becomeFan" type="button" value="<?php echo $fanButton; ?>" /></a>
                 <br /><br />
                 <a href="#" class="button"><input id="joinGroup" type="button" value="<?php echo $joinButton; ?>" /></a>
+                <?php if ($isOwner) { ?>
+                <br /><br />
+                <a href="#" class="button"><input id="removeGroupBtnLarge" type="button" value="<?php echo t('Obriši'); ?>" /></a>
+                <?php } ?>
             </div>
             <strong><?php echo t('O bendu:'); ?></strong><br /><br /><br />
             <blockquote id="description">
@@ -67,7 +71,49 @@
     }
 ?>
 
-<div id="gallery">
+
+<div class="gallery">
+<h3><?php echo t('Članovi benda'); ?></h3>
+<?php echo Html::form(array('/group/join')); ?>
+<?php foreach ($group->artists as $artist) { ?>
+    <div class="thumb">
+        <?php if ($isOwner) { ?>
+        <input type="hidden" name="uid" value="<?php echo $artist->user_id; ?>" />
+        <input type="hidden" name="gid" value="<?php echo $group->id; ?>" />
+        <input type="submit" class="removeFan" <?php echo $artist->user_id == u()->id ? 'id="removeGroupBtn"' : ''; ?> value="<?php echo t('Obriši'); ?>" />
+        <?php } ?>
+        <a class="artistInfo" href="<?php echo url('/artist/view', array('uid' => $artist->user_id)); ?>"><?php echo e($artist->user->person->fullName); ?></a>
+        <a rel="pictureGroup" href="<?php echo $artist->user->profilePicture->getShortPath('_large'); ?>" class="fancybox">
+            <img alt="<?php echo e($artist->user->person->fullName); ?>" title="<?php echo e($artist->user->person->fullName); ?>" src="<?php echo $artist->user->profilePicture->getShortPath('_small'); ?>" />
+        </a>
+    </div>
+<?php } ?>
+<?php echo Html::endForm(); ?>
+</div>
+
+<div class="clear"></div>
+
+<div class="gallery">
+<h3><?php echo t('Slike'); ?></h3>
+<?php foreach ($pictures as $i => $picture) { ?>
+    <div class="thumb">
+        <?php if ($isOwner) { ?>
+            <a class="removePicture" href="#" id="<?php echo $picture->id; ?>"><?php echo t('Obriši'); ?></a>
+            <a class="setProfilePicture" href="#" id="<?php echo $picture->id; ?>"><?php echo t('Postavi za profil sliku'); ?></a>
+        <?php } ?>
+        <a rel="pictureGroup" href="<?php echo $picture->getShortPath('_large'); ?>" class="fancybox">
+            <img alt="<?php echo e($picture->name); ?>" src="<?php echo $picture->getShortPath('_small'); ?>" />
+        </a>
+    </div>
+<?php } ?>
+</div>
+
+<div class="clear"></div>
+
+<?php if (false) { ?>
+
+<div class="gallery">
+<h3><?php echo t('Video');?></h3>
 <?php foreach ($pictures as $i => $picture) { ?>
     <div class="thumb">
         <?php if ($isOwner) { ?>
@@ -79,6 +125,28 @@
         </a>
     </div>
 <?php } ?>
+</div>
+
+<div class="clear"></div>
+
+<?php } ?>
+
+<div class="gallery">
+<h3><?php echo t('Fanovi');?></h3>
+<?php echo Html::form(array('/group/removeFan')); ?>
+<?php foreach ($group->fans as $fan) { ?>
+    <div class="thumb">
+        <?php if ($isOwner) { ?>
+        <input type="hidden" name="uid" value="<?php echo $fan->id; ?>" />
+        <input type="hidden" name="gid" value="<?php echo $group->id; ?>" />
+        <input type="submit" class="removeFan" value="<?php echo t('Obriši'); ?>" />
+        <?php } ?>
+        <a rel="pictureGroup" href="<?php echo $fan->profilePicture->getShortPath('_large'); ?>" class="fancybox">
+            <img alt="<?php echo e($fan->person->fullName); ?>" title="<?php echo e($fan->person->fullName); ?>" src="<?php echo $fan->profilePicture->getShortPath('_small'); ?>" />
+        </a>
+    </div>
+<?php } ?>
+<?php echo Html::endForm(); ?>
 </div>
 
 <?php if ($isOwner) { ?>
@@ -223,6 +291,20 @@ $(function() {
                 console.log(xhr.responseText);
             }
         });
+    });
+    
+    $('#removeGroupBtn').click(function (e) {
+        e.preventDefault();
+        return confirm('<?php echo t('Vi ste administrator benda.\nAko ga napustite on će biti obrisan.'); ?>')
+            ? $('#removeGroup').submit()
+            : false;
+    });
+    
+    $('#removeGroupBtnLarge').click(function (e) {
+        e.preventDefault();
+        return confirm('<?php echo t('Da li sigurno želite da obrišete bend?'); ?>')
+            ? $('#removeGroup').submit()
+            : false;
     });
 
 <?php } ?>

@@ -20,7 +20,8 @@ $(document).ready(function(){
     }
 
     $('ul.dropdown').superfish({
-        autoArrows: false
+        autoArrows: false,
+        delay: 400
     });
 
 });

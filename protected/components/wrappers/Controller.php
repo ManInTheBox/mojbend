@@ -260,11 +260,48 @@ class Controller extends CController
                         'label' => $artist->user->person->fullName,
                     );
                 }
+                
+                echo json_encode($result);
+                a()->end();
+            }
+            
+            $users = Person::model()->findAll('first_name LIKE :q OR last_name LIKE :q', array(':q' => "%$q%"));
+            $groups = Group::model()->findAll('name LIKE :name', array(':name' => "%$q%"));
+            
+            $targets = array_merge($users, $groups);
+            
+            foreach ($targets as $target)
+            {
+                if ($target instanceof Person)
+                {
+                    if ($target->user->artist)
+                    {
+                        $result[] = array(
+                            'label' => $target->fullName,
+                            'location' => url('/artist/view', array('uid' => $target->user_id))
+                        );
+                    }
+                    else
+                    {
+                        $result[] = array(
+                            'label' => $target->fullName,
+                            'location' => url('/user/view', array('uid' => $person->user_id))
+                        );
+                    }
+                }
+                else if ($target instanceof Group)
+                {
+                    $result[] = array(
+                        'label' => $target->name,
+                        'location' => url('/group/view', array('gid' => $target->id))
+                    );
+                }
             }
             
             echo json_encode($result);
             a()->end();
         }
+        
         $this->render('//common/search');
     }
 

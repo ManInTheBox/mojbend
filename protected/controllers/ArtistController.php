@@ -36,7 +36,7 @@ class ArtistController extends Controller
             ),
             array('allow',
                 'actions' => array(
-                    'delete', 'removePicture', 'fan',
+                    'delete', 'removePicture', 'fan', 'removeFan',
                 ),
                 'users' => array('@'),
                 'verbs' => array('POST'),
@@ -49,7 +49,7 @@ class ArtistController extends Controller
 
     public function actionList()
     {
-        echo 'list akcija';
+        $this->render('//common/search');
     }
 
     public function actionEdit()
@@ -250,4 +250,21 @@ class ArtistController extends Controller
         a()->end();
     }
 
+    public function actionRemoveFan()
+    {
+        $uid = $_POST['uid'];
+        
+        $criteria = new CDbCriteria();
+        $criteria->condition = 'fan_id = :id AND artist_id = :artist';
+        $criteria->params = array(':id' => $uid, ':artist' => u()->id);
+
+        $fanArtist = FanArtist::model()->find($criteria);
+
+        if ($fanArtist)
+        {
+            $fanArtist->delete();
+            $this->setFlashSuccess(t('Fan uspešno obrisan.'));
+        }
+        $this->redirect(array('/artist/view', 'uid' => u()->id));
+    }    
 }

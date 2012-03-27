@@ -1,6 +1,6 @@
 <?php $this->renderFlash(); ?>
 
-<table>
+<table cellspacing="0">
     <tr>
         <td>
             <h4><?php echo l(e($person->fullName), array()); ?></h4>
@@ -48,18 +48,38 @@
     echo CHtml::endForm();
 ?>
 
-<div id="gallery">
-<?php foreach ($pictures as $i => $picture) { ?>
+<div class="gallery">
+<h3><?php echo t('Slike'); ?></h3>
+<?php foreach ($pictures as $picture) { ?>
     <div class="thumb">
         <?php if ($isOwner) { ?>
             <a class="removePicture" href="#" id="<?php echo $picture->id; ?>"><?php echo t('Obriši'); ?></a>
             <a class="setProfilePicture" href="#" id="<?php echo $picture->id; ?>"><?php echo t('Postavi za profil sliku'); ?></a>
         <?php } ?>
         <a rel="pictureGroup" href="<?php echo $picture->getShortPath('_large'); ?>" class="fancybox">
-            <img alt="<?php echo e($picture->name); ?>" title="<?php echo e($picture->name); ?>" src="<?php echo $picture->getShortPath('_small'); ?>" />
+            <img alt="<?php echo e($picture->name); ?>" src="<?php echo $picture->getShortPath('_small'); ?>" />
         </a>
     </div>
 <?php } ?>
+</div>
+
+<div class="clear"></div>
+
+<div class="gallery">
+<h3><?php echo t('Fanovi');?></h3>
+<?php echo Html::form(array('/artist/removeFan')); ?>
+<?php foreach ($artist->fans as $fan) { ?>
+    <div class="thumb">
+        <?php if ($isOwner) { ?>
+        <input type="hidden" name="uid" value="<?php echo $fan->id; ?>" />
+        <input type="submit" class="removeFan" value="<?php echo t('Obriši'); ?>" />
+        <?php } ?>
+        <a rel="pictureGroup" href="<?php echo $fan->profilePicture->getShortPath('_large'); ?>" class="fancybox">
+            <img alt="<?php echo e($fan->person->fullName); ?>" title="<?php echo e($fan->person->fullName); ?>" src="<?php echo $fan->profilePicture->getShortPath('_small'); ?>" />
+        </a>
+    </div>
+<?php } ?>
+<?php echo Html::endForm(); ?>
 </div>
 
 <script type="text/javascript">
@@ -111,7 +131,7 @@ $(function() {
             type: 'POST',
             data: {
                 CSRF_TOKEN: '<?php echo r()->getCsrfToken(); ?>',
-                uid: '<?php echo u()->id; ?>'
+                uid: <?php echo $person->user_id; ?>
             },
             success: function (res) {
                 $('#becomeFan').val(res);

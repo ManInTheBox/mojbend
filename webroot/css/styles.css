@@ -1,5 +1,5 @@
 body {
-    background: #FFF url('./../images/body-single.png') repeat-x scroll top left;
+    background: #FFF url('./images/body-single.png') repeat-x scroll top left;
     margin:0;
     padding:0;
     font-family: Verdana, Geneva, sans-serif;
@@ -8,11 +8,11 @@ body {
 }
 
 body.homepage {
-    background: #FFF url('./../images/body.png') repeat-x scroll top left;
+    background: #FFF url('./images/body.png') repeat-x scroll top left;
 }
 
 body.noheader {
-    background: #FFF url('./../images/body-noheader.png') repeat-x scroll top left;
+    background: #FFF url('./images/body-noheader.png') repeat-x scroll top left;
 }
 
 * {
@@ -37,7 +37,7 @@ th {
     text-decoration: none;
     text-transform: uppercase;
     text-shadow:-1px -1px #CE5709;
-    background: #F87B27 url('./../images/frontpage-link.png') repeat-x scroll top left;
+    background: #F87B27 url('./images/frontpage-link.png') repeat-x scroll top left;
 }
 
 td {
@@ -132,7 +132,7 @@ form input.formbutton {
     text-decoration: none;
     text-transform: uppercase;
     text-shadow:-1px -1px #CE5709;
-    background: #F87B27 url('./../images/frontpage-link.png') repeat-x scroll top left;
+    background: #F87B27 url('./images/frontpage-link.png') repeat-x scroll top left;
     border: none;
     width: auto;
     overflow: visible;
@@ -226,7 +226,7 @@ ul.styledlist {
 }
 
 ul.styledlist li {
-    background: #fff url('./../images/list-item.gif') no-repeat scroll left center;
+    background: #fff url('./images/list-item.gif') no-repeat scroll left center;
     padding-left: 15px;
     padding-bottom: 0;
     margin-bottom: 5px;
@@ -315,12 +315,12 @@ ul.styledlist li {
 }
 
 #nav ul li a.has_submenu {
-    background: transparent url('./../images/submenu-item.gif') no-repeat scroll right center;
+    background: transparent url('./images/submenu-item.gif') no-repeat scroll right center;
     padding-right: 30px;
 }
 
 #nav ul li a.has_submenu:hover, #nav ul li.sfHover a.has_submenu {
-    background-image: url('./../images/submenu-item-hover.gif');
+    background-image: url('./images/submenu-item-hover.gif');
 }
 
 
@@ -437,7 +437,7 @@ div.slides-container div.jFlowSlideContainer div.slide-image {
     padding-top: 0px;
 }
 span.jFlowPrev, span.jFlowNext {
-    background-image:url('./../images/slide-prev.gif');
+    background-image:url('./images/slide-prev.gif');
     background-repeat:no-repeat;
     display:block;
     height:41px;
@@ -448,7 +448,7 @@ span.jFlowPrev, span.jFlowNext {
 }
 span.jFlowPrev span, span.jFlowNext span { display:none; }
 span.jFlowNext {
-    background-image:url('./../images/slide-next.gif');
+    background-image:url('./images/slide-next.gif');
     float:right;
 }
 div.slides-container div.controls {
@@ -482,7 +482,7 @@ p.frontpage-button a {
     text-decoration: none;
     text-transform: uppercase;
     text-shadow:-1px -1px #CE5709;
-    background: #F87B27 url('./../images/frontpage-link.png') repeat-x scroll top left;
+    background: #F87B27 url('./images/frontpage-link.png') repeat-x scroll top left;
     border: 1px solid #000;
 }
 p.frontpage-button a:hover {
@@ -593,7 +593,7 @@ div#sub-header h2 {
     line-height: 1.9em;
     padding: 0px 0px 15px 5px;
     font-weight: bold;
-    background: transparent url('./../images/h4.png') no-repeat scroll left bottom;
+    background: transparent url('./images/h4.png') no-repeat scroll left bottom;
 }
 
 .sidebar h4 strong {
@@ -606,7 +606,7 @@ div#sub-header h2 {
 
 #footer {
     margin:0 auto;
-    background: #000 url('./../images/footer.jpg') repeat-x scroll bottom left;
+    background: #000 url('./images/footer.jpg') repeat-x scroll bottom left;
     padding: 30px 5px 0;
 }
 
@@ -733,7 +733,7 @@ input.error {
     padding: 10px;
     width: 150px;
     text-shadow:-1px -1px #CE5709;
-    background: #F87B27 url('./../images/frontpage-link.png') repeat-x scroll top left;
+    background: #F87B27 url('./images/frontpage-link.png') repeat-x scroll top left;
     border: 1px solid #333;
 }
 
@@ -796,7 +796,7 @@ input.error {
     font-size: 1.1em;
 }
 
-#gallery {
+.gallery {
     display: block; 
     margin-top: 30px;
     padding: 5px 5px 5px 6px;
@@ -812,6 +812,8 @@ input.error {
     border: 1px solid #E1E1E1;    
 }
 
+.artistInfo, 
+.setProfilePicture, 
 .removePicture {
     display: block;
     clear: none;
@@ -821,13 +823,11 @@ input.error {
     color: #666;
 }
 
-.setProfilePicture {
+.removeFan {
     display: block;
     clear: none;
     font-size: 0.7em;
-    padding-bottom: 5px;
-    text-decoration: none;
-    color: #666;
+    margin-bottom: 5px;
 }
 
 #profilePicture {

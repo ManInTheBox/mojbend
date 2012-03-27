@@ -29,7 +29,7 @@ class GroupController extends Controller
             ),
             array('allow',
                 'actions' => array(
-                    'new', 'newFan', 'inviteMembers', 'edit',
+                    'new', 'inviteMembers', 'edit',
                     'addPicture',
                 ),
                 'users' => array('@'),
@@ -37,7 +37,7 @@ class GroupController extends Controller
             array('allow',
                 'actions' => array(
                     'delete', 'removePicture', 'fan', 'profilePicture',
-                    'join',
+                    'join', 'removeFan',
                 ),
                 'users' => array('@'),
                 'verbs' => array('POST'),
@@ -178,12 +178,27 @@ class GroupController extends Controller
 
         if (Group::belongsToGroup($gid, ArtistGroup::ROLE_ADMIN))
         {
+            $profilePicture = null;
+            
             foreach ($group->pictures as $picture)
             {
-                $picture->remove();
+                if ($picture->id != $group->profilePicture->id)
+                {
+                    $picture->remove();
+                }
+                else
+                {
+                    $profilePicture = $group->profilePicture;
+                }
             }
             
             $group->delete();
+            
+            if ($profilePicture)
+            {
+                $profilePicture->remove();
+            }
+            
             $this->setFlashSuccess(t('Bend je uspešno obrisan sa sistema.'));
             $this->redirect(array('/group/list'));
         }
@@ -208,6 +223,12 @@ class GroupController extends Controller
                         $request->receiver_id = $receiver_id;
                         $request->group_id = $gid;
                         $request->save();
+                        
+                        $artistGroup = new ArtistGroup();
+                        $artistGroup->artist_id = $receiver_id;
+                        $artistGroup->group_id = $gid;
+                        $artistGroup->role = ArtistGroup::ROLE_MEMBER;
+                        $artistGroup->save();
                     }
                     $transaction->commit();
                 }
@@ -245,54 +266,85 @@ class GroupController extends Controller
         {
             $fanGroup->delete();
             echo t('Postani fan');
+            
         }
         
         a()->end();
     }
-
-    public function actionJoin()
+    
+    public function actionRemoveFan()
     {
-        if (ajax())
+        $gid = $_POST['gid'];
+        $uid = $_POST['uid'];
+        
+        if (Group::belongsToGroup($gid, ArtistGroup::ROLE_ADMIN))
         {
-            if (!Artist::belongsToArtist(u()->id))
-            {
-                echo json_encode(array(
-                    'err' => true
-                ));
-                $this->setFlashInfo(t('Da biste se priključili bendu morate se prvo afirmisati kao muzičar.'));
-            }
-            else
-            {
-                $criteria = new CDbCriteria();
-                $criteria->condition = 'artist_id = :id AND group_id = :gid';
-                $criteria->params = array(':id' => u()->id, ':gid' => $_POST['gid']);
+            $criteria = new CDbCriteria();
+            $criteria->condition = 'fan_id = :id AND group_id = :gid';
+            $criteria->params = array(':id' => $uid, ':gid' => $gid);
 
-                $artistGroup = ArtistGroup::model()->find($criteria);
-                if (!$artistGroup)
-                {
-                    $artistGroup = new ArtistGroup();
-                    $artistGroup->artist_id = u()->id;
-                    $artistGroup->group_id = $_POST['gid'];
-                    $artistGroup->role = ArtistGroup::ROLE_MEMBER;
-
-                    if ($artistGroup->save(false))
-                    {
-                        echo json_encode(array('msg' => t('Napusti bend')));
-                    }
-                }
-                else
-                {
-                    $artistGroup->delete();
-                    echo json_encode(array('msg' => t('Priključi se')));
-                }
-            }
+            $fanGroup = FanGroup::model()->find($criteria);
             
-            a()->end();
+            if ($fanGroup)
+            {
+                $fanGroup->delete();
+                $this->setFlashSuccess(t('Fan uspešno obrisan.'));
+            }
+            $this->redirect(array('/group/view', 'gid' => $gid));
         }
         else
         {
-            throw new CHttpException(404);
+            throw new CHttpException(403);
         }
+    }
+
+    public function actionJoin()
+    {
+        $uid = isset ($_POST['uid']) ? $_POST['uid'] : u()->id;
+        $gid = $_POST['gid'];
+
+        if (!Artist::belongsToArtist($uid))
+        {
+            echo json_encode(array(
+                'err' => true
+            ));
+            $this->setFlashInfo(t('Da biste se priključili bendu morate se prvo afirmisati kao muzičar.'));
+        }
+        else
+        {
+            $criteria = new CDbCriteria();
+            $criteria->condition = 'artist_id = :id AND group_id = :gid';
+            $criteria->params = array(':id' => $uid, ':gid' => $gid);
+
+            $artistGroup = ArtistGroup::model()->find($criteria);
+            if (!$artistGroup)
+            {
+                $artistGroup = new ArtistGroup();
+                $artistGroup->artist_id = $uid;
+                $artistGroup->group_id = $gid;
+                $artistGroup->role = ArtistGroup::ROLE_MEMBER;
+
+                if ($artistGroup->save(false))
+                {
+                    echo json_encode(array('msg' => t('Napusti bend')));
+                }
+            }
+            else
+            {
+                $artistGroup->delete();
+                GroupMemberRequest::model()->deleteAllByAttributes(array('receiver_id' => $uid, 'group_id' => $gid));
+                if (ajax())
+                {
+                    echo json_encode(array('msg' => t('Priključi se')));
+                }
+                else
+                {
+                    $this->setFlashSuccess(t('Član uspešno obrisan.'));
+                    $this->redirect(array('/group/view', 'gid' => $gid));
+                }
+            }
+        }
+        a()->end();
     }
     
     public function actionProfilePicture()

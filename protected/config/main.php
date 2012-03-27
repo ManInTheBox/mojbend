@@ -61,14 +61,14 @@ return array(
                     'class' => 'CFileLogRoute',
                     'levels' => 'error, warning',
                 ),
-//                array(
-//                    'class' => 'CWebLogRoute',
-//                    'filter' => 'CLogFilter',
-//                ),
-//                array(
-//                    'class' => 'CProfileLogRoute',
-//                    'report' => 'callstack',
-//                ),
+                array(
+                    'class' => 'CWebLogRoute',
+                    'filter' => 'CLogFilter',
+                ),
+                array(
+                    'class' => 'CProfileLogRoute',
+                    'report' => 'callstack',
+                ),
             ),
         ),
     ),

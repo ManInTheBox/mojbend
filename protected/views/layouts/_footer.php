@@ -8,21 +8,21 @@
     <div class="footer-box">
         <h4><?php echo t('Brzi linkovi'); ?></h4>
         <ul>
-            <li><?php echo l(t('Izgubljena lozinka'), array('/user/passwordReset')); ?></li>
-            <li><?php echo l(t('Izgubljena lozinka'), array('/user/passwordReset')); ?></li>
-            <li><?php echo l(t('Izgubljena lozinka'), array('/user/passwordReset')); ?></li>
-            <li><?php echo l(t('Izgubljena lozinka'), array('/user/passwordReset')); ?></li>
-            <li><?php echo l(t('Izgubljena lozinka'), array('/user/passwordReset')); ?></li>
+            <li><?php echo l(t('Bendovi'), array('/group/list')); ?></li>
+            <li><?php echo l(t('Muzičari'), array('/artist/list')); ?></li>
+            <li><?php echo guest() ? l(t('Izgubljena lozinka'), array('/user/passwordReset')) : ''; ?></li>
+            <li><?php echo guest() ? l(t('Uloguj se'), array('/user/login')) : l(t('Izloguj se'), array('/user/logout')); ?></li>
+            <li><?php echo guest() ? l(t('Registruj se'), array('/user/register')) : ''; ?></li>
         </ul>
     </div>
     <div class="footer-box">
         <h4><?php echo t('Prijatelji sajta'); ?></h4>
         <ul>
-            <li><a href="http://www.google.com" title="spyka Webmaster resources">google</a></li>
-            <li><a href="http://www.google.com" title="spyka Webmaster resources">google</a></li>
-            <li><a href="http://www.google.com" title="spyka Webmaster resources">google</a></li>
-            <li><a href="http://www.google.com" title="spyka Webmaster resources">google</a></li>
-            <li><a href="http://www.google.com" title="spyka Webmaster resources">google</a></li>
+            <li><a href="http://www.exitfest.org" target="_blank" title="Exit Festival">Exit Festival</a></li>
+            <li><a href="http://www.rockexpress.org" target="_blank" title="ROCK express">ROCK express</a></li>
+            <li><a href="http://nocturnemagazine.net" target="_blank" title="NOCTURNE">NOCTURNE</a></li>
+            <li><a href="http://gitarijada.org" target="_blank" title="Zaječarska gitarijada">Zaječarska gitarijada</a></li>
+            <li><a href="http://www.google.com" title="spyka Webmaster resources">GLIGORICEV SAJT?</a></li>
         </ul>
    </div>
     <div class="footer-box end-footer-box">
@@ -43,8 +43,10 @@
 <script type="text/javascript">
     $('#searchquery').autocomplete({
         minLength: 1,
-//        anim : 'bounce',
         source: '<?php echo url('search');?>',
-        delay: 300
+        delay: 300,
+        select: function (event, ui) {
+            window.location = ui.item.location;
+        }
      });
 </script>

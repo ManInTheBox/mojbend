@@ -163,16 +163,16 @@ class Picture extends ActiveRecord
         
         $dir = "$root/$level[0]/$level[1]/$level[2]";
         
-        unlink("$dir/{$this->name}.{$this->extension}");
-        unlink("$dir/{$this->name}_front.{$this->extension}");
-        unlink("$dir/{$this->name}_small.{$this->extension}");
-        unlink("$dir/{$this->name}_large.{$this->extension}");
+        @unlink("$dir/{$this->name}.{$this->extension}");
+        @unlink("$dir/{$this->name}_front.{$this->extension}");
+        @unlink("$dir/{$this->name}_small.{$this->extension}");
+        @unlink("$dir/{$this->name}_large.{$this->extension}");
         
-        if (count(scandir($dir)) == 2)
+        if (count(@scandir($dir)) == 2)
         {
-            rmdir("$root/$level[0]/$level[1]/$level[2]");
-            rmdir("$root/$level[0]/$level[1]");
-            rmdir("$root/$level[0]");
+            @rmdir("$root/$level[0]/$level[1]/$level[2]");
+            @rmdir("$root/$level[0]/$level[1]");
+            @rmdir("$root/$level[0]");
         }
         
         return $this->delete();

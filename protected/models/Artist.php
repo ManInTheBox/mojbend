@@ -60,6 +60,10 @@ class Artist extends ActiveRecord
             'groups' => array(self::MANY_MANY, 'Group', 'artist_group(artist_id, group_id)'),
             'instruments' => array(self::MANY_MANY, 'ListInstrument', 'artist_instrument(artist_id, list_instrument_id)'),
             'fans' => array(self::MANY_MANY, 'User', 'fan_artist(artist_id, fan_id)'),
+            'pictures' => array(self::HAS_MANY, 'Picture', 'related_id',
+                'condition' => 'related = "artist"'
+            ),
+
         );
     }
 

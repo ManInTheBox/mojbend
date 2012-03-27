@@ -65,12 +65,22 @@ class LoginForm extends CFormModel
                         break;
                     case UserIdentity::ERROR_STATUS_PENDING:
                         $user = User::model()->findByAttributes(array('email' => $this->email));
-                        $this->addErrors(array(
-                            'password' => t(
-                                            'Vaš nalog još uvek nije aktiviran. Molimo vas pratite link koji je poslat u e-mail poruci.<br />{link}', 
-                                            array('{link}' => l('AKTIVIRAJ ODMAH', url('/user/activate', array('uid' => $user->id, 'token' => $user->activation_hash))),)),
-                            'email' => '', // don't display the same error message
-                            ));
+                        if (YII_DEBUG)
+                        {
+                            $this->addErrors(array(
+                                'password' => t(
+                                                'Vaš nalog još uvek nije aktiviran. Molimo vas pratite link koji je poslat u e-mail poruci.<br />{link}', 
+                                                array('{link}' => l('Development mode: aktiviraj nalog odmah', url('/user/activate', array('uid' => $user->id, 'token' => $user->activation_hash))),)),
+                                'email' => '', // don't display the same error message
+                                ));
+                        }
+                        else
+                        {
+                            $this->addErrors(array(
+                                'password' => t('Vaš nalog još uvek nije aktiviran. Molimo vas pratite link koji je poslat u e-mail poruci.'),
+                                'email' => '', // don't display the same error message
+                                ));
+                        }
                         break;
                     case UserIdentity::ERROR_STATUS_SUSPENDED:
                         $this->addErrors(array(

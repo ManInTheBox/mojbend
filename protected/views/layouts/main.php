@@ -38,18 +38,18 @@
                     'activeCssClass' => 'selected',
                     'items' => array(
                         array('label' => t('Početna'), 'url' => array('/site/index')),
-                        array('label' => t('Bendovi'), 'url' => array('/group/list')),
+                        array('label' => t('Bendovi'), 'url' => array('/group/list'), 'linkOptions' => array('class' => 'has_submenu'), 'items' => array(
+                            array('label' => t('Moji bendovi'), 'url' => array('/group/mine'), 'visible' => !guest()),
+                            array('label' => t('Najpopularniji'), 'url' => array('/group/popular')),
+                            array('label' => t('Najnoviji'), 'url' => array('/group/newest'))
+                        )),
+                        array('label' => t('Muzičari'), 'url' => array('/artist/list'), 'linkOptions' => array('class' => 'has_submenu'), 'items' => array(
+                            array('label' => t('Najpopularniji'), 'url' => array('/artist/popular')),
+                            array('label' => t('Najnoviji'), 'url' => array('/artist/newest'))
+                        )),
                         array('label' => t('Uloguj se'), 'url' => array('/user/login'), 'visible' => guest()),
-                        array('label' => t('Izloguj se'), 'url' => array('/user/logout'), 'visible' => !guest())
-
-//                        array('label' => 'DDL', 'url' => array('#'),
-//                            'htmlOptions' =>
-//                            array(
-//                                'class' => 'has_submenu'
-//                            ), 'items' => array(
-//                                array('label' => 'About', 'url' => array('/site/page', 'view' => 'about')),
-//                                array('label' => 'Contact', 'url' => array('/site/contact')),
-//                        )),
+                        array('label' => t('Izloguj se'), 'url' => array('/user/logout'), 'visible' => !guest()),
+                        array('label' => t('Registruj se'), 'url' => array('/user/register'), 'visible' => guest())
                     ),
                 ));
                 ?>
