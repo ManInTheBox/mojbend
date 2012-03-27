@@ -1,3 +1,15 @@
+<?php
+$criteria = new CDbCriteria();
+$criteria->condition = 'fan_id = :id AND group_id = :gid';
+$criteria->params = array(':id' => u()->id, ':gid' => $data->id);
+$fanButton = FanGroup::model()->exists($criteria) ? t('Vi ste fan') : t('Postani fan');
+
+$criteria = new CDbCriteria();
+$criteria->condition = 'artist_id = :id AND group_id = :gid';
+$criteria->params = array(':id' => u()->id, ':gid' => $data->id);
+$joinButton = ArtistGroup::model()->exists($criteria) ? t('Napusti bend') : t('Priključi se');
+?>
+
 <table>
     <tr>
         <td>
@@ -10,9 +22,9 @@
                 <img id="profilePicture" src="<?php echo $data->profilePicture->getShortPath('_small'); ?>" alt="<?php echo e($data->name); ?>" title="<?php echo e($data->name); ?>" />
             </a>
             <div style="height: 60px; margin: 10px 0 13px 30px;">
-                <a href="#" class="button small"><input id="becomeFan" type="button" value="<?php echo 'ahahah'; ?>" /></a>
+                <a href="<?php echo $data->url; ?>" class="button small"><input type="button" value="<?php echo $fanButton; ?>" /></a>
                 <br /><br />
-                <a href="#" class="button small"><input id="joinGroup" type="button" value="<?php echo 'joinbutton'; ?>" /></a>
+                <a href="<?php echo $data->url; ?>" class="button small"><input type="button" value="<?php echo $joinButton; ?>" /></a>
             </div>
         </td>
         <td style="width: 450px;">
@@ -30,67 +42,3 @@
         </td>
     </tr>
 </table>
-
-<?php $isOwner = false; ?>
-
-<script type="text/javascript">
-$(function () {
-
-    $('#joinGroup').click(function(e) {
-
-        <?php if (guest()) { ?>
-            window.location = '<?php echo url('/user/login'); ?>';
-        <?php } ?>
-
-        e.preventDefault();
-
-        <?php if ($isOwner) { ?>
-        return confirm('<?php echo t('Vi ste administrator benda.\nAko ga napustite on će biti obrisan.'); ?>')
-            ? $('#removeGroup').submit()
-            : false;
-        <?php } else { ?>
-        $.ajax({
-            url: '<?php echo url('/group/join'); ?>',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                CSRF_TOKEN: '<?php echo r()->getCsrfToken(); ?>',
-                gid: <?php echo $data->id; ?>
-            },
-            success: function(res) {
-                if (res.err) {
-                    window.location = '<?php echo url('/user/edit'); ?>';
-                }
-                $('#joinGroup').val(res.msg);
-            },
-            error: function(xhr) {
-                console.log(xhr.responseText);
-            }
-        });
-        <?php } ?>
-    });
-
-    $('#becomeFan').click(function (e) {
-
-        <?php if (guest()) { ?>
-            window.location = '<?php echo url('/user/login'); ?>';
-        <?php } ?>
-
-        e.preventDefault();
-        $.ajax({
-            url: '<?php echo url('/group/fan'); ?>',
-            type: 'POST',
-            data: {
-                CSRF_TOKEN: '<?php echo r()->getCsrfToken(); ?>',
-                gid: <?php echo $data->id; ?>
-            },
-            success: function (res) {
-                $('#becomeFan').val(res);
-            },
-            error: function (xhr) {
-                console.log(xhr.responseText);
-            }
-        });
-    });
-});
-</script>

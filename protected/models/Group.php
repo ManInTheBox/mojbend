@@ -138,6 +138,11 @@ class Group extends ActiveRecord
         }
 
         return sql($query)->queryScalar($params);
-    }    
+    }
+
+    public function getUrl()
+    {
+        return url('/group/view', array('gid' => $this->id));
+    }
 
 }

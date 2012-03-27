@@ -14,6 +14,7 @@ class GroupController extends Controller
     {
         return array(
             'accessControl',
+            array('application.filters.ArtistFilter'),
         );
     }
 
@@ -50,9 +51,12 @@ class GroupController extends Controller
 
     public function actionList()
     {
+        $this->sidebar = '//layouts/_groupsidebar';
+        $this->sidebarData = Group::model()->findAll();
+
         $groups = new CActiveDataProvider('Group', array(
                     'pagination' => array(
-                        'pageSize' => 1,
+                        'pageSize' => 2,
                     ),
                 ));
         

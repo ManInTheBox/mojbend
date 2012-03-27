@@ -12,7 +12,7 @@ $this->widget('zii.widgets.CListView', array(
         'prevPageLabel' => t('Prethodna'),
         'header' => false,
     ),
-    'dataProvider' => $groups,
+    'dataProvider' => $artists,
     'itemView' => '_item',
     'ajaxUpdate' => false,
     'summaryText' => false,

@@ -3,6 +3,8 @@
 class SiteController extends Controller
 {
 
+    public $bodyClass = 'homepage';
+    
     /**
      * Declares class-based actions.
      */

@@ -25,7 +25,21 @@ class Controller extends CController
 
     public $sidebar = '//layouts/_sidebar';
 
+    public $sidebarData = array();
+
+    public $slidesData = array();
+
+    public $bodyClass = 'noheader';
+
     public $footer = '//layouts/_footer';
+
+    public function init()
+    {
+        $groups = Group::model()->findAll();
+        $artist = Artist::model()->findAll();
+
+        $this->slidesData = CMap::mergeArray($groups, $artist);
+    }
 
     public function setFlash($key, $value, $defaultValue = null)
     {

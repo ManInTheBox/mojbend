@@ -433,8 +433,10 @@ div.slides-container div.jFlowSlideContainer div {
 }
 div.slides-container div.jFlowSlideContainer div.slide-image {
     float:left;
-    width: 370px;
-    padding-top: 0px;
+    width: 351px;
+    height: 226px;
+    margin-right: 20px;
+    border: 5px solid #FAFAFA;
 }
 span.jFlowPrev, span.jFlowNext {
     background-image:url('./images/slide-prev.gif');
@@ -512,7 +514,7 @@ div#sub-header h2 {
 }
 
 .box { 
-    margin: 0;
+    margin-bottom: 40px;
     padding: 0 5px;
     background-color: #fff;
 }

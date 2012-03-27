@@ -14,6 +14,18 @@
                     <?php echo l('pera peric', array('/user/home', 'alias' => 'pera')); ?>
                 </p>
             </li>
+            <li>
+                <p style="margin: 0;">
+                    <?php echo t('Ovo je tako cool site... bla bla blaasdsdfasa dfsdfasd fasdf'); ?>
+                    <?php echo l('pera peric', array('/user/home', 'alias' => 'pera')); ?>
+                </p>
+            </li>
+            <li>
+                <p style="margin: 0;">
+                    <?php echo t('Ovo je tako cool site... bla bla blaasdsdfasa dfsdfasd fasdf'); ?>
+                    <?php echo l('pera peric', array('/user/home', 'alias' => 'pera')); ?>
+                </p>
+            </li>
         </ul>
     </li>
 </ul>

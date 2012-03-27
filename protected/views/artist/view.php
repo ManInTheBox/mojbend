@@ -36,7 +36,7 @@
     </tr>
     <tr>
         <td><?php echo e($person->getAttributeLabel('gender')); ?>:</td>
-        <td><?php echo !empty($person->gender) ? e($person->gender) : $person->emptyMessage; ?></td>
+        <td><?php echo $person->chosenGender; ?></td>
     </tr>
 </table>
 

@@ -56,6 +56,7 @@ class Artist extends ActiveRecord
     {
         return array(
             'user' => array(self::BELONGS_TO, 'User', 'user_id'),
+//            'person' => array(self::BELONGS_TO, 'Person', 'user_id'),
             'listArtistType' => array(self::BELONGS_TO, 'ListArtistType', 'list_artist_type_id'),
             'groups' => array(self::MANY_MANY, 'Group', 'artist_group(artist_id, group_id)'),
             'instruments' => array(self::MANY_MANY, 'ListInstrument', 'artist_instrument(artist_id, list_instrument_id)'),
@@ -63,6 +64,7 @@ class Artist extends ActiveRecord
             'pictures' => array(self::HAS_MANY, 'Picture', 'related_id',
                 'condition' => 'related = "artist"'
             ),
+//            'profilePicture' => array(self::HAS_ONE, 'Picture', 'id'),
 
         );
     }
@@ -90,5 +92,18 @@ class Artist extends ActiveRecord
             ':id' => $id,
         );
         return sql($query)->queryScalar($params);
-    }    
+    }
+
+    public function getUrl()
+    {
+        return url('/artist/view', array('uid' => $this->user_id));
+    }
+
+    public function getProfilePicture()
+    {
+        $criteria = new CDbCriteria();
+        $criteria->condition = 'id = :id';
+        $criteria->params = array(':id' => $this->user->profile_picture_id);
+        return Picture::model()->find($criteria);
+    }
 }

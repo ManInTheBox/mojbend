@@ -122,18 +122,21 @@ class User extends ActiveRecord
 
     public function getHomeUrl($absolute = false)
     {
-        $homeUrl = '';
+//        $homeUrl = '';
         
-        if ($this->username)
-        {
-            $homeUrl = url('/user/home', array('alias' => $this->username), $absolute);
-        }
-        else
-        {
-            $homeUrl = url('/user/home', array('uid' => $this->id), $absolute);
-        }
+//        if ($this->username)
+//        {
+//            $homeUrl = url('/user/home', array('alias' => $this->username), $absolute);
+//        }
+//        else
+//        {
+//            $homeUrl = url('/user/home', array('uid' => $this->id), $absolute);
+//        }
 
-        return $homeUrl;
+//        return $homeUrl;
+
+        return $this->isArtist ? $this->artist->url : $this->url;
+
     }
     
     public function getIsArtist()
@@ -144,5 +147,10 @@ class User extends ActiveRecord
     public function setIsArtist($value)
     {
         $this->_isArtist = $value;
+    }
+
+    public function getUrl()
+    {
+        return url('/user/view', array('uid' => $this->id));
     }
 }

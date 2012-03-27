@@ -24,7 +24,7 @@ $form = $this->beginWidget('ActiveForm', array(
                         'attribute' => 'captchaCode',
                         'language' => 'en_US',
                         'theme' => 'white',
-                        'publicKey' => '6LdTbsMSAAAAAPbZUwY_1vPFfAv1YIesfrBOAJdY'))
+                        'publicKey' => '6Lfnfc8SAAAAAEd3GSzfwYeF99Fyy1ACiAwQPCi0'))
             ?>
         </td>
     </tr>

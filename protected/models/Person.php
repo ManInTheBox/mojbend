@@ -91,4 +91,11 @@ class Person extends ActiveRecord
         return trim($this->first_name . ' ' . $this->last_name);
     }
 
+    public function getChosenGender()
+    {
+        $genders = $this->getGenderOptions();
+
+        return isset ($this->gender) ? $genders[$this->gender] : $this->emptyMessage;
+    }
+
 }

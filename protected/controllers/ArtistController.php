@@ -14,6 +14,7 @@ class ArtistController extends Controller
     {
         return array(
             'accessControl',
+            array('application.filters.ArtistFilter - edit'),
         );
     }
 
@@ -49,7 +50,16 @@ class ArtistController extends Controller
 
     public function actionList()
     {
-        $this->render('//common/search');
+        $this->sidebar = '//layouts/_artistsidebar';
+        $this->sidebarData = Artist::model()->findAll();
+
+        $artists = new CActiveDataProvider('Artist', array(
+                    'pagination' => array(
+                        'pageSize' => 2,
+                    ),
+                ));
+
+        $this->render('list', array('artists' => $artists));
     }
 
     public function actionEdit()
@@ -163,6 +173,8 @@ class ArtistController extends Controller
                     }
 
                     $artist->delete();
+                    u()->setState('homeUrl', url('/user/view', array('uid' => u()->id)));
+
 
                     $this->setFlashSuccess();
                     $this->redirect(array('/user/edit'));

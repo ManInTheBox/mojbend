@@ -22,7 +22,7 @@ class PasswordResetForm extends CFormModel
             array('email', 'email', 'checkMX' => true),
             array('captchaCode',
                'ext.recaptcha.EReCaptchaValidator',
-               'privateKey'=>'6LdTbsMSAAAAAAVxt4iS3tv4G2vuOu85Fr8quz_0'
+               'privateKey'=>'6Lfnfc8SAAAAAPWBDitXXn-GTvQgJotlQFuWU59b'
             ),
         );
     }

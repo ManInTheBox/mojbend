@@ -21,6 +21,7 @@ class UserController extends Controller
             array('application.filters.ArtistFilter - logout'),
         );
     }
+
     /**
      * Specifies the access control rules.
      * This method is used by the 'accessControl' filter.
@@ -31,7 +32,7 @@ class UserController extends Controller
         return array(
             array('allow',
                 'actions' => array(
-                    'home', 'search',
+                    'home', 'search', 'view',
                 ),
                 'users' => array('*'),
             ),
@@ -54,7 +55,7 @@ class UserController extends Controller
                 ),
                 'users' => array('@'),
                 'verbs' => array('POST'),
-            ),            
+            ),
             array('deny',
                 'users' => array('*'),
             ),
@@ -74,6 +75,8 @@ class UserController extends Controller
 
     public function actionRegister()
     {
+        $this->bodyClass = 'homepage';
+
         $user = new User();
         $person = new Person();
 
@@ -83,7 +86,7 @@ class UserController extends Controller
 
             $user->attributes = $_POST['User'];
             $person->attributes = $_POST['Person'];
-            
+
             if ($user->save())
             {
                 $saved = true;
@@ -123,6 +126,8 @@ class UserController extends Controller
 
     public function actionLogin()
     {
+        $this->bodyClass = 'homepage';
+
         $loginForm = new LoginForm();
 
         if (isset($_POST['LoginForm']))
@@ -172,9 +177,9 @@ class UserController extends Controller
                 try
                 {
                     $user = $this->loadModel('User', array(
-                        'condition' => 'email = :email',
-                        'params' => array(':email' => $passwordResetForm->email)
-                    ));
+                                'condition' => 'email = :email',
+                                'params' => array(':email' => $passwordResetForm->email)
+                            ));
 
                     $email = new Email();
                     $email->user_id = $user->id;
@@ -246,15 +251,15 @@ class UserController extends Controller
     {
         $user = $this->loadModel('User', u()->id);
         $user->person->displayDate();
-        
+
         if ($user->isArtist)
         {
             $this->redirect(array('/artist/edit'));
         }
-        
+
         $newPasswordForm = new NewPasswordForm();
 
-        if (isset ($_POST['User']))
+        if (isset($_POST['User']))
         {
             $user->isArtist = $_POST['User']['isArtist'];
             $user->person->attributes = $_POST['Person'];
@@ -266,20 +271,21 @@ class UserController extends Controller
                 {
                     $user->password = User::encryptPassword($newPasswordForm->newPassword, $user->salt);
                 }
-                
+
                 $user->person->save(false);
-                
+
                 if ($user->isArtist)
                 {
                     $artist = new Artist();
                     $artist->user_id = $user->id;
                     $artist->save(false);
                     u()->setState('artistPending', true);
-                    
+                    u()->setState('homeUrl', url('/artist/view', array('uid' => u()->id)));
+
                     $this->setFlashSuccess();
                     $this->refresh();
                 }
-                
+
                 $this->setFlashSuccess();
             }
         }
@@ -289,14 +295,21 @@ class UserController extends Controller
             'newPasswordForm' => $newPasswordForm
         ));
     }
-    
+
     public function actionView($uid)
     {
+        $user = $this->loadModel('User', $uid);
+
+        $this->render('//user/view', array(
+            'user' => $user,
+            'person' => $user->person,
+            'isOwner' => $user->id == u()->id,
+        ));
     }
-    
+
     public function actionProfilePicture()
     {
-        if (ajax())
+        if (ajax ())
         {
             $uid = $_POST['uid'];
             $pid = $_POST['pid'];
@@ -313,6 +326,6 @@ class UserController extends Controller
         {
             throw new CHttpException(400);
         }
-    }    
+    }
 
 }

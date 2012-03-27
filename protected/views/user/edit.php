@@ -48,6 +48,7 @@ $form = $this->beginWidget('ActiveForm', array(
     </tr>
     <tr>
         <td class="button"><?php echo CHtml::submitButton(t('Sačuvaj izmene')); ?></td>
+        <td class="button"><?php echo l(Html::button(t('Odustani')), array('/user/view', 'uid' => u()->id)); ?></td>
     </tr>
 </table>
 

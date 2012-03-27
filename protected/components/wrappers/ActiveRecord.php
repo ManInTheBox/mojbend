@@ -93,4 +93,8 @@ class ActiveRecord extends CActiveRecord
             }
         }
     }
+
+    public function getUrl()
+    {
+    }
 }

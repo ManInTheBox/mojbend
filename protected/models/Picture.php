@@ -128,7 +128,7 @@ class Picture extends ActiveRecord
     public function generateThumbs()
     {
         $imageProcessor = new ImageProcessor($this->realPath);
-        $imageProcessor->resize(351, 262);
+        $imageProcessor->resize(351, 226);
         $imageProcessor->save($this->storePath . '/' . $this->name . '_front.' . $this->extension);
         $imageProcessor = new ImageProcessor($this->realPath);
         $imageProcessor->resize(140, 104);
