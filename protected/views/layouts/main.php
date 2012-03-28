@@ -24,7 +24,7 @@
     <body class="<?php echo $this->bodyClass; ?>">
         <div id="container">
             <div id="header">
-                <h1><a href="<?php echo bu(); ?>">moj<strong>bend</strong></a></h1>
+                <h1><a href="<?php echo guest() ? bu() : u()->homeUrl; ?>">moj<strong>bend</strong></a></h1>
                 <h2><?php echo t('ovde je muzika...'); ?></h2>
                 <div class="clear"></div>
             </div>

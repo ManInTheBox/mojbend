@@ -5,10 +5,13 @@ return array(
     'register' => 'user/register',
     'logout' => 'user/logout',
     
-    '<alias:\w+>' => 'user/home',
-    'home/<alias:\w+>' => 'user/home',
-    'home/<uid:\d+>' => 'user/home',
-    'home' => 'user/home',
+    'group' => 'group/list',
+    'artist' => 'artist/list',
+    
+//    '<alias:\w+>' => 'user/home',
+//    'home/<alias:\w+>' => 'user/home',
+//    'home/<uid:\d+>' => 'user/home',
+//    'home' => 'user/home',
     
     'new-password' => 'user/passwordReset',
     'lost-password' => 'user/lostPassword',

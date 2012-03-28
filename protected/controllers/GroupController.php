@@ -31,7 +31,7 @@ class GroupController extends Controller
             array('allow',
                 'actions' => array(
                     'new', 'inviteMembers', 'edit',
-                    'addPicture',
+                    'addPicture', 'mine',
                 ),
                 'users' => array('@'),
             ),
@@ -57,6 +57,29 @@ class GroupController extends Controller
         $groups = new CActiveDataProvider('Group', array(
                     'pagination' => array(
                         'pageSize' => 2,
+                    ),
+                    'criteria' => array(
+                        'order' => 'created_at ASC'
+                    ),
+                ));
+        
+        $this->render('list', array('groups' => $groups));
+    }
+    
+    public function actionMine()
+    {
+        $this->sidebar = '//layouts/_groupsidebar';
+        $this->sidebarData = Group::model()->findAll();
+
+        $groups = new CActiveDataProvider('Group', array(
+                    'pagination' => array(
+                        'pageSize' => 2,
+                    ),
+                    'criteria' => array(
+                        'with' => 'artists',
+                        'condition' => '`artists`.user_id = :id',
+                        'params' => array(':id' => u()->id),
+                        'order' => 'created_at ASC'
                     ),
                 ));
         

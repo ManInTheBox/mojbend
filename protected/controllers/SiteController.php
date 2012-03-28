@@ -40,6 +40,8 @@ class SiteController extends Controller
      */
     public function actionError()
     {
+        $this->bodyClass = 'noheader';
+        
         if ($error = a()->errorHandler->error)
         {
             if ($error['code'] == 500)
