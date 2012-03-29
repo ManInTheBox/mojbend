@@ -12,7 +12,7 @@
     </tr>
     <tr>
         <td>
-            <a style="position: relative;" href="<?php echo $user->profilePicture->getShortPath('_large'); ?>" class="fancybox">
+            <a title="<?php echo $user->profilePicture->fancybox; ?>" style="position: relative;" href="<?php echo $user->profilePicture->getShortPath('_large'); ?>" class="fancybox">
                 <img id="profilePicture" alt="<?php echo e($person->fullName); ?>" title="<?php echo e($person->fullName); ?>" src="<?php echo $user->profilePicture->shortPath; ?>" />
             </a>
         </td>
@@ -53,10 +53,11 @@
 <?php foreach ($pictures as $picture) { ?>
     <div class="thumb">
         <?php if ($isOwner) { ?>
+            <a class="editPicture" href="<?php echo url('editPicture', array('id' => $picture->id, 'related_id' => $artist->user_id, 'related' => 'artist')); ?>"><?php echo t('Izmeni'); ?></a>
             <a class="removePicture" href="#" id="<?php echo $picture->id; ?>"><?php echo t('Obriši'); ?></a>
             <a class="setProfilePicture" href="#" id="<?php echo $picture->id; ?>"><?php echo t('Postavi za profil sliku'); ?></a>
         <?php } ?>
-        <a rel="pictureGroup" href="<?php echo $picture->getShortPath('_large'); ?>" class="fancybox">
+        <a title="<?php echo $picture->fancybox; ?>" rel="pictureGroup" href="<?php echo $picture->getShortPath('_large'); ?>" class="fancybox">
             <img alt="<?php echo e($picture->name); ?>" src="<?php echo $picture->getShortPath('_small'); ?>" />
         </a>
     </div>
@@ -74,7 +75,7 @@
         <input type="hidden" name="uid" value="<?php echo $fan->id; ?>" />
         <input type="submit" class="removeFan" value="<?php echo t('Obriši'); ?>" />
         <?php } ?>
-        <a rel="pictureGroup" href="<?php echo $fan->profilePicture->getShortPath('_large'); ?>" class="fancybox">
+        <a title="<?php echo $fan->profilePicture->fancybox; ?>" rel="pictureGroup" href="<?php echo $fan->profilePicture->getShortPath('_large'); ?>" class="fancybox">
             <img alt="<?php echo e($fan->person->fullName); ?>" title="<?php echo e($fan->person->fullName); ?>" src="<?php echo $fan->profilePicture->getShortPath('_small'); ?>" />
         </a>
     </div>

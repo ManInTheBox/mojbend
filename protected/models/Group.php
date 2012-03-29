@@ -65,6 +65,8 @@ class Group extends ActiveRecord
     public function relations()
     {
         return array(
+            'artistGroup' => array(self::HAS_ONE, 'ArtistGroup', 'group_id'),
+            'fanGroup' => array(self::HAS_ONE, 'FanGroup', 'group_id'),
             'artists' => array(self::MANY_MANY, 'Artist', 'artist_group(group_id, artist_id)'),
             'fans' => array(self::MANY_MANY, 'User', 'fan_group(group_id, fan_id)'),
             'profilePicture' => array(self::BELONGS_TO, 'Picture', 'profile_picture_id'),

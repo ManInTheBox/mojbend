@@ -13,7 +13,7 @@
     </tr>
     <tr>
         <td>
-            <a style="position: relative;" href="<?php echo $group->profilePicture->getShortPath('_large'); ?>" class="fancybox">
+            <a title="<?php echo $group->profilePicture->fancybox; ?>" style="position: relative;" href="<?php echo $group->profilePicture->getShortPath('_large'); ?>" class="fancybox">
                 <img id="profilePicture" alt="<?php echo e($group->name); ?>" title="<?php echo e($group->name); ?>" src="<?php echo $group->profilePicture->shortPath; ?>" />
             </a>
         </td>
@@ -74,16 +74,16 @@
 
 <div class="gallery">
 <h3><?php echo t('Članovi benda'); ?></h3>
-<?php echo Html::form(array('/group/join')); ?>
+<?php echo Html::form(array('/group/join'), 'post', array('id' => 'removeMember')); ?>
+    <input type="hidden" name="gid" value="<?php echo $group->id; ?>" />
+    <input type="hidden" name="uid" id="uid" value="" />
 <?php foreach ($group->artists as $artist) { ?>
     <div class="thumb">
         <?php if ($isOwner) { ?>
-        <input type="hidden" name="uid" value="<?php echo $artist->user_id; ?>" />
-        <input type="hidden" name="gid" value="<?php echo $group->id; ?>" />
-        <input type="submit" class="removeFan" <?php echo $artist->user_id == u()->id ? 'id="removeGroupBtn"' : ''; ?> value="<?php echo t('Obriši'); ?>" />
+        <input rel="<?php echo $artist->user_id; ?>" type="submit" class="removeMember" <?php echo $artist->user_id == u()->id ? 'id="removeGroupBtn"' : ''; ?> value="<?php echo t('Obriši'); ?>" />
         <?php } ?>
         <a class="artistInfo" href="<?php echo url('/artist/view', array('uid' => $artist->user_id)); ?>"><?php echo e($artist->user->person->fullName); ?></a>
-        <a rel="pictureGroup" href="<?php echo $artist->user->profilePicture->getShortPath('_large'); ?>" class="fancybox">
+        <a title="<?php echo $artist->user->profilePicture->fancybox; ?>" rel="pictureGroup" href="<?php echo $artist->user->profilePicture->getShortPath('_large'); ?>" class="fancybox">
             <img alt="<?php echo e($artist->user->person->fullName); ?>" title="<?php echo e($artist->user->person->fullName); ?>" src="<?php echo $artist->user->profilePicture->getShortPath('_small'); ?>" />
         </a>
     </div>
@@ -98,10 +98,11 @@
 <?php foreach ($pictures as $i => $picture) { ?>
     <div class="thumb">
         <?php if ($isOwner) { ?>
+            <a class="editPicture" href="<?php echo url('editPicture', array('id' => $picture->id, 'related_id' => $group->id, 'related' => 'group')); ?>"><?php echo t('Izmeni'); ?></a>
             <a class="removePicture" href="#" id="<?php echo $picture->id; ?>"><?php echo t('Obriši'); ?></a>
             <a class="setProfilePicture" href="#" id="<?php echo $picture->id; ?>"><?php echo t('Postavi za profil sliku'); ?></a>
         <?php } ?>
-        <a rel="pictureGroup" href="<?php echo $picture->getShortPath('_large'); ?>" class="fancybox">
+        <a title="<?php echo $picture->fancybox; ?>" rel="pictureGroup" href="<?php echo $picture->getShortPath('_large'); ?>" class="fancybox">
             <img alt="<?php echo e($picture->name); ?>" src="<?php echo $picture->getShortPath('_small'); ?>" />
         </a>
     </div>
@@ -141,7 +142,7 @@
         <input type="hidden" name="gid" value="<?php echo $group->id; ?>" />
         <input type="submit" class="removeFan" value="<?php echo t('Obriši'); ?>" />
         <?php } ?>
-        <a rel="pictureGroup" href="<?php echo $fan->profilePicture->getShortPath('_large'); ?>" class="fancybox">
+        <a title="<?php echo $fan->profilePicture->fancybox; ?>" rel="pictureGroup" href="<?php echo $fan->profilePicture->getShortPath('_large'); ?>" class="fancybox">
             <img alt="<?php echo e($fan->person->fullName); ?>" title="<?php echo e($fan->person->fullName); ?>" src="<?php echo $fan->profilePicture->getShortPath('_small'); ?>" />
         </a>
     </div>
@@ -163,7 +164,7 @@
 
 <script type="text/javascript">
 $(function() {
-
+    
     $('#dialogMessage').dialog({
         autoOpen: false,
         width: 500,
@@ -298,6 +299,11 @@ $(function() {
         return confirm('<?php echo t('Vi ste administrator benda.\nAko ga napustite on će biti obrisan.'); ?>')
             ? $('#removeGroup').submit()
             : false;
+    });
+    
+    $('.removeMember').click(function () {
+        $('#uid').val($(this).attr('rel'));
+        $('#removeMember').submit();
     });
     
     $('#removeGroupBtnLarge').click(function (e) {

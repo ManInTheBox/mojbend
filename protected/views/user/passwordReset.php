@@ -7,7 +7,7 @@ $form = $this->beginWidget('ActiveForm', array(
 
 <h3><?php echo t('Nova lozinka'); ?></h3>
 <p>
-    <?php echo t('Unesite vasu email adresu i mi cemo vam poslati dalja uputstva.'); ?>
+    <?php echo t('Unesite vašu email adresu i mi ćemo vam poslati detaljna uputstva. Samo pratite uputstva u e-mail poruci.'); ?>
 </p>
 
 <table>

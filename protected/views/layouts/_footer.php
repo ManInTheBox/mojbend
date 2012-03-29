@@ -2,7 +2,7 @@
     <div class="footer-box">
         <h4><?php echo t('O projektu mojbend'); ?></h4>
         <p>
-            <?php echo t('neki poduzi tekst...neki poduzi tekst...neki poduzi tekst...neki poduzi tekst...neki poduzi tekst...'); ?>
+            <?php echo t('Projekat mojbend.rs je nastao kao želja autora da se svi muzičari okupe na jednom mestu. Ovde ćete naći sve profile muzičara i bendove sa kojima možda i zasvirate jednog dana. Lepo se provedite, pevajte i svirajte.'); ?>
         </p>
     </div>
     <div class="footer-box">
@@ -10,6 +10,7 @@
         <ul>
             <li><?php echo l(t('Bendovi'), array('/group/list')); ?></li>
             <li><?php echo l(t('Muzičari'), array('/artist/list')); ?></li>
+            <li><?php echo !guest() ? l(t('Moj nalog'), array('/user/edit')) : ''; ?></li>
             <li><?php echo guest() ? l(t('Izgubljena lozinka'), array('/user/passwordReset')) : ''; ?></li>
             <li><?php echo guest() ? l(t('Uloguj se'), array('/user/login')) : l(t('Izloguj se'), array('/user/logout')); ?></li>
             <li><?php echo guest() ? l(t('Registruj se'), array('/user/register')) : ''; ?></li>

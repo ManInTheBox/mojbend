@@ -24,14 +24,14 @@ class GroupController extends Controller
             array('allow',
                 'actions' => array(
                     'list', 'view', 'moreDescription',
-                    'search',
+                    'search', 'popular', 'newest',
                 ),
                 'users' => array('*'),
             ),
             array('allow',
                 'actions' => array(
                     'new', 'inviteMembers', 'edit',
-                    'addPicture', 'mine',
+                    'addPicture', 'mine', 'editPicture',
                 ),
                 'users' => array('@'),
             ),
@@ -52,11 +52,17 @@ class GroupController extends Controller
     public function actionList()
     {
         $this->sidebar = '//layouts/_groupsidebar';
-        $this->sidebarData = Group::model()->findAll();
+        $this->sidebarData = Group::model()->findAll(array(
+            'select' => '*, COUNT(fanGroup.group_id) AS c',
+            'with' => 'fanGroup',
+            'group' => 'fanGroup.group_id',
+            'order' => 'c DESC',
+            'limit' => 5,
+        ));
 
         $groups = new CActiveDataProvider('Group', array(
                     'pagination' => array(
-                        'pageSize' => 2,
+                        'pageSize' => $this->pageSize,
                     ),
                     'criteria' => array(
                         'order' => 'created_at ASC'
@@ -69,17 +75,72 @@ class GroupController extends Controller
     public function actionMine()
     {
         $this->sidebar = '//layouts/_groupsidebar';
-        $this->sidebarData = Group::model()->findAll();
+        $this->sidebarData = Group::model()->findAll(array(
+            'select' => '*, COUNT(fanGroup.group_id) AS c',
+            'with' => 'fanGroup',
+            'group' => 'fanGroup.group_id',
+            'order' => 'c DESC',
+            'limit' => 5,
+        ));
 
         $groups = new CActiveDataProvider('Group', array(
                     'pagination' => array(
-                        'pageSize' => 2,
+                        'pageSize' => $this->pageSize,
                     ),
                     'criteria' => array(
-                        'with' => 'artists',
-                        'condition' => '`artists`.user_id = :id',
+                        'with' => 'artistGroup',
+                        'condition' => '`artistGroup`.artist_id = :id',
                         'params' => array(':id' => u()->id),
-                        'order' => 'created_at ASC'
+                        'order' => 't.created_at ASC'
+                    ),
+                ));
+        
+        $this->render('list', array('groups' => $groups));
+    }
+    
+    public function actionPopular()
+    {
+        $this->sidebar = '//layouts/_groupsidebar';
+        $this->sidebarData = Group::model()->findAll(array(
+            'select' => '*, COUNT(fanGroup.group_id) AS c',
+            'with' => 'fanGroup',
+            'group' => 'fanGroup.group_id',
+            'order' => 'c DESC',
+            'limit' => 5,
+        ));
+
+        $groups = new CActiveDataProvider('Group', array(
+                    'pagination' => array(
+                        'pageSize' => $this->pageSize,
+                    ),
+                    'criteria' => array(
+                        'select' => '*, COUNT(fanGroup.group_id) AS c',
+                        'with' => 'fanGroup',
+                        'group' => 'fanGroup.group_id',
+                        'order' => 'c DESC'
+                    ),
+                ));
+        
+        $this->render('list', array('groups' => $groups));
+    }
+    
+    public function actionNewest()
+    {
+        $this->sidebar = '//layouts/_groupsidebar';
+        $this->sidebarData = Group::model()->findAll(array(
+            'select' => '*, COUNT(fanGroup.group_id) AS c',
+            'with' => 'fanGroup',
+            'group' => 'fanGroup.group_id',
+            'order' => 'c DESC',
+            'limit' => 5,
+        ));
+
+        $groups = new CActiveDataProvider('Group', array(
+                    'pagination' => array(
+                        'pageSize' => $this->pageSize,
+                    ),
+                    'criteria' => array(
+                        'order' => 'created_at DESC'
                     ),
                 ));
         
@@ -173,7 +234,7 @@ class GroupController extends Controller
                 $artistGroup->save(false);
 
                 $this->setFlashSuccess(t('Bend je uspešno osnovan.'));
-                $this->redirect(array('/group/list'));
+                $this->redirect(array('/group/view', 'gid' => $group->id));
             }
         }
 
@@ -184,6 +245,11 @@ class GroupController extends Controller
     {
         $group = $this->loadModel('Group', $gid);
         $group->displayDate();
+        
+        if ($group->founded_date == $group->emptyMessage)
+        {
+            $group->founded_date = '';
+        }        
 
         if (isset($_POST['Group']))
         {

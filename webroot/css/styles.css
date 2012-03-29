@@ -816,6 +816,7 @@ input.error {
 
 .artistInfo, 
 .setProfilePicture, 
+.editPicture, 
 .removePicture {
     display: block;
     clear: none;
@@ -825,6 +826,7 @@ input.error {
     color: #666;
 }
 
+.removeMember,
 .removeFan {
     display: block;
     clear: none;

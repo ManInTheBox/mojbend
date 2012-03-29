@@ -52,7 +52,7 @@ class Picture extends ActiveRecord
     public function rules()
     {
         return array(
-            array('instance', 'file', 'types' => 'jpg, gif, png', 'maxSize' => 1024 * 1024 * 2, 'tooLarge' => t('Dozvoljena veličina slike je 2MB.')),
+            array('instance', 'file', 'allowEmpty' => true, 'types' => 'jpg, gif, png', 'maxSize' => 1024 * 1024 * 2, 'tooLarge' => t('Dozvoljena veličina slike je 2MB.')),
             array('size, related_id', 'numerical', 'integerOnly'=>true),
             array('name, related', 'length', 'max'=>32),
             array('path', 'length','max'=>1000),
@@ -176,6 +176,11 @@ class Picture extends ActiveRecord
         }
         
         return $this->delete();
+    }
+    
+    public function getFancybox()
+    {
+        return nl2br(e(trim(e($this->title) . "\n" . e($this->location) . "\n" . e($this->description))));
     }
 
 }

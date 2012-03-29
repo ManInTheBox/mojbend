@@ -32,11 +32,13 @@ class Controller extends CController
     public $bodyClass = 'noheader';
 
     public $footer = '//layouts/_footer';
+    
+    public $pageSize = 3;
 
     public function init()
     {
-        $groups = Group::model()->findAll();
-        $artist = Artist::model()->findAll();
+        $groups = Group::model()->findAll(array('limit' => 3));
+        $artist = Artist::model()->findAll(array('limit' => 3));
 
         $this->slidesData = CMap::mergeArray($groups, $artist);
     }
@@ -225,6 +227,28 @@ class Controller extends CController
         $this->redirect(array("/$related/view", $identifier => $id));
     }
     
+    public function actionEditPicture($id, $related_id, $related)
+    {
+        $picture = $this->loadModel('Picture', $id);
+        
+        $identifier = $related == 'group' ? 'gid' : 'uid';
+        $backUrl = array("/$related/view", $identifier => $related_id);
+        
+        if (isset ($_POST['Picture']))
+        {
+            $picture->attributes = $_POST['Picture'];
+            $picture->save();
+            $this->setFlashSuccess();
+            $this->redirect($backUrl);
+        }
+        
+        $this->render('//common/editPicture', array(
+            'picture' => $picture,
+            'backUrl' => $backUrl,
+        ));
+        
+    }
+    
     private function checkMediaAccess($id, $related)
     {
         switch ($related)
@@ -254,9 +278,10 @@ class Controller extends CController
     
     public function actionSearch()
     {
+        $q = $_GET['term'];
+        
         if (ajax())
         {
-            $q = $_GET['term'];
             $result = array();
 
             if (isset ($_GET['artist']))
@@ -299,7 +324,7 @@ class Controller extends CController
                     {
                         $result[] = array(
                             'label' => $target->fullName,
-                            'location' => url('/user/view', array('uid' => $person->user_id))
+                            'location' => url('/user/view', array('uid' => $target->user_id))
                         );
                     }
                 }
@@ -315,8 +340,10 @@ class Controller extends CController
             echo json_encode($result);
             a()->end();
         }
-        
-        $this->render('//common/search');
+        else
+        {
+            $this->render('//common/search');
+        }
     }
 
 }

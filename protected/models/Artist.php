@@ -56,6 +56,7 @@ class Artist extends ActiveRecord
     {
         return array(
             'user' => array(self::BELONGS_TO, 'User', 'user_id'),
+            'fanArtist' => array(self::HAS_ONE, 'FanArtist', 'artist_id'),
 //            'person' => array(self::BELONGS_TO, 'Person', 'user_id'),
             'listArtistType' => array(self::BELONGS_TO, 'ListArtistType', 'list_artist_type_id'),
             'groups' => array(self::MANY_MANY, 'Group', 'artist_group(artist_id, group_id)'),
@@ -105,5 +106,11 @@ class Artist extends ActiveRecord
         $criteria->condition = 'id = :id';
         $criteria->params = array(':id' => $this->user->profile_picture_id);
         return Picture::model()->find($criteria);
+    }
+    
+    protected function beforeSave()
+    {
+        $this->created_at = time();
+        return parent::beforeSave();
     }
 }

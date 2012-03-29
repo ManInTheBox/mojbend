@@ -16,6 +16,7 @@ $this->widget('zii.widgets.CListView', array(
     'itemView' => '_item',
     'ajaxUpdate' => false,
     'summaryText' => false,
+    'emptyText' => t('Ne postoji ni jedan muzičar.'),
 ));
 ?>
 </div>

@@ -32,7 +32,10 @@ class ActiveRecord extends CActiveRecord
     
     protected function afterSave()
     {
-        $this->unpackDate();
+        if (!$this->isNewRecord)
+        {
+            $this->unpackDate();
+        }
         parent::afterSave();
     }
     
@@ -45,6 +48,7 @@ class ActiveRecord extends CActiveRecord
                 if ($this->{$column->name})
                 {
                     $this->_unpackedDates[] = $column->name;
+                    
                     $d = explode('-', $this->{$column->name});
                     $date = "$d[2].$d[1].$d[0]";
                     $this->{$column->name} = $date;

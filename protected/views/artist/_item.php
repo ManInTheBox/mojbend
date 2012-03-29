@@ -21,7 +21,7 @@ $fanButton = FanArtist::model()->exists($criteria) ? t('Vi ste fan') : t('Postan
             </div>
         </td>
         <td style="width: 450px;">
-            <strong><?php echo t('O bendu:'); ?></strong><br /><br />
+            <strong><?php echo t('O muzičaru:'); ?></strong><br /><br />
             <blockquote style="min-height: 100px;">
                 <?php 
                     if (strlen($data->description) > 550)

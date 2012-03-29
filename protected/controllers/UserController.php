@@ -8,7 +8,6 @@ class UserController extends Controller
      * using two-column layout. See 'protected/views/layouts/column2.php'.
      */
     public $layout = '//layouts/column2';
-    public $defaultAction = 'home';
 
     /**
      * @return array action filters
@@ -17,7 +16,6 @@ class UserController extends Controller
     {
         return array(
             'accessControl',
-            array('application.filters.UserReadyFilter + home'),
             array('application.filters.ArtistFilter - logout'),
         );
     }
@@ -32,7 +30,7 @@ class UserController extends Controller
         return array(
             array('allow',
                 'actions' => array(
-                    'home', 'search', 'view',
+                    'search', 'view',
                 ),
                 'users' => array('*'),
             ),
@@ -60,17 +58,6 @@ class UserController extends Controller
                 'users' => array('*'),
             ),
         );
-    }
-
-    /**
-     * Lists all models.
-     */
-    public function actionHome()
-    {
-        $dataProvider = new CActiveDataProvider('User');
-        $this->render('index', array(
-            'dataProvider' => $dataProvider,
-        ));
     }
 
     public function actionRegister()
@@ -251,6 +238,11 @@ class UserController extends Controller
     {
         $user = $this->loadModel('User', u()->id);
         $user->person->displayDate();
+        
+        if ($user->person->birth_date == $user->emptyMessage)
+        {
+            $user->person->birth_date = '';
+        }
 
         if ($user->isArtist)
         {
@@ -299,6 +291,16 @@ class UserController extends Controller
     public function actionView($uid)
     {
         $user = $this->loadModel('User', $uid);
+        
+        if ($user->person->birth_date == '00.00.0000')
+        {
+            $user->person->birth_date = $user->emptyMessage;
+        }
+        
+        if ($user->isArtist)
+        {
+            $this->redirect(array('/artist/view', 'uid' => $uid));
+        }
 
         $this->render('//user/view', array(
             'user' => $user,

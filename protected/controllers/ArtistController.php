@@ -24,14 +24,14 @@ class ArtistController extends Controller
             array('allow',
                 'actions' => array(
                     'list', 'view', 'moreDescription',
-                    'search',
+                    'search', 'popular', 'newest'
                 ),
                 'users' => array('*'),
             ),
             array('allow',
                 'actions' => array(
                     'new', 'newFan', 'inviteMembers', 'join', 'edit',
-                    'addPicture', 'removePicture',
+                    'addPicture', 'removePicture', 'editPicture',
                 ),
                 'users' => array('@'),
             ),
@@ -51,17 +51,75 @@ class ArtistController extends Controller
     public function actionList()
     {
         $this->sidebar = '//layouts/_artistsidebar';
-        $this->sidebarData = Artist::model()->findAll();
+        $this->sidebarData = Artist::model()->findAll(array(
+            'select' => '*, COUNT(fanArtist.artist_id) AS c',
+            'with' => 'fanArtist',
+            'group' => 'fanArtist.artist_id',
+            'order' => 'c DESC',
+            'limit' => 5,
+        ));
 
         $artists = new CActiveDataProvider('Artist', array(
                     'pagination' => array(
-                        'pageSize' => 2,
+                        'pageSize' => $this->pageSize,
+                    ),
+                    'criteria' => array(
+                        'order' => 'created_at ASC',
+                    ),
+                ));
+
+        $this->render('list', array('artists' => $artists));
+    }
+    
+    public function actionNewest()
+    {
+        $this->sidebar = '//layouts/_artistsidebar';
+        $this->sidebarData = Artist::model()->findAll(array(
+            'select' => '*, COUNT(fanArtist.artist_id) AS c',
+            'with' => 'fanArtist',
+            'group' => 'fanArtist.artist_id',
+            'order' => 'c DESC',
+            'limit' => 5,
+        ));
+
+        $artists = new CActiveDataProvider('Artist', array(
+                    'pagination' => array(
+                        'pageSize' => $this->pageSize,
+                    ),
+                    'criteria' => array(
+                        'order' => 'created_at DESC',
                     ),
                 ));
 
         $this->render('list', array('artists' => $artists));
     }
 
+    public function actionPopular()
+    {
+        $this->sidebar = '//layouts/_artistsidebar';
+        $this->sidebarData = Artist::model()->findAll(array(
+            'select' => '*, COUNT(fanArtist.artist_id) AS c',
+            'with' => 'fanArtist',
+            'group' => 'fanArtist.artist_id',
+            'order' => 'c DESC',
+            'limit' => 5,
+        ));
+
+        $artists = new CActiveDataProvider('Artist', array(
+                    'pagination' => array(
+                        'pageSize' => $this->pageSize,
+                    ),
+                    'criteria' => array(
+                        'select' => '*, COUNT(fanArtist.artist_id) AS c',
+                        'with' => 'fanArtist',
+                        'group' => 'fanArtist.artist_id',
+                        'order' => 'c DESC'
+                    ),
+                ));
+        
+        $this->render('list', array('artists' => $artists));
+    }
+    
     public function actionEdit()
     {
         $artist = $this->loadModel('Artist', array(
@@ -74,6 +132,11 @@ class ArtistController extends Controller
         $artist->scenario = 'edit';
         $artist->user->person->scenario = 'artistEdit';
         $artist->user->person->displayDate();
+        
+        if ($artist->user->person->birth_date == $artist->emptyMessage)
+        {
+            $artist->user->person->birth_date = '';
+        }        
 
         $newPasswordForm = new NewPasswordForm();
 
